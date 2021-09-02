@@ -344,9 +344,9 @@ export async function setupPreConditions(state: DefaultStateManager, testData: a
     await state.putAccount(address, account)
   }
   await state.commit()
-  // Clear the touched stack, otherwise untouched accounts in the block which are empty (>= SpuriousDragon)
-  // will get deleted from the state, resulting in state trie errors
-  ;(<any>state)._touched.clear()
+    // Clear the touched stack, otherwise untouched accounts in the block which are empty (>= SpuriousDragon)
+    // will get deleted from the state, resulting in state trie errors
+    ; (<any>state)._touched.clear()
 }
 
 /**
