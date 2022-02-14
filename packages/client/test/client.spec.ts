@@ -67,6 +67,14 @@ tape('[EthereumClient]', async (t) => {
     t.equals(await client.stop(), false, 'already stopped')
   })
 
+  t.test('should', async () => {
+    const servers = [new Server()] as any
+    const config = new Config({ servers })
+    const client = new EthereumClient({ config })
+    await client.start()
+    // t.equals(client.services, "", "")
+  })
+
   t.test('should reset td', (t) => {
     td.reset()
     t.end()

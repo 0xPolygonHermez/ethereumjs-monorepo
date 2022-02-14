@@ -1,7 +1,9 @@
 import tape from 'tape'
 import { INVALID_PARAMS } from '../../../lib/rpc/error-code'
-import { params, baseRequest, baseSetup } from '../helpers'
+import { baseRequest, baseSetup, params } from '../helpers'
 import { checkError } from '../util'
+import Common, { Chain } from '@ethereumjs/common'
+import Blockchain from '@ethereumjs/blockchain'
 
 const method = 'engine_executePayloadV1'
 
@@ -36,6 +38,38 @@ tape(`${method}: call with invalid block hash without 0x`, async (t) => {
   )
   await baseRequest(t, server, req, 200, expectRes)
 })
+
+tape(`${method}: call with non stored block`, async (t) => {
+  const commonChain = new Common({ chain: Chain.Mainnet, hardfork: 'london' })
+  const blockchain = await Blockchain.create({ validateBlocks: false, validateConsensus: false })
+  const { server } = baseSetup({ engine: true, blockchain, commonChain })
+
+  const req = params(method, [
+    {
+      ...validTestVector,
+      parentHash: '0xc184c10440f05f5a23a55d1d7ebcb1b3892935fb56f23cdc9a7f42c348ffd174',
+    },
+  ])
+  const expectRes = (res: any) => {
+    t.equal(res.body.result.status, 'SYNCING')
+    t.equal(res.body.result.validationError, null)
+    t.equal(res.body.result.latestValidHash, null)
+  }
+  await baseRequest(t, server, req, 200, expectRes)
+})
+
+// tape(`${method}: call with valid data`, async (t) => {
+//   const commonChain = new Common({ chain: Chain.Mainnet, hardfork: 'london' })
+//   const { server } = baseSetup({ engine: true, commonChain, includeVM: true })
+//
+//   const req = params(method, [validTestVector])
+//   const expectRes = checkError(
+//     t,
+//     INVALID_PARAMS,
+//     "invalid argument 0 for key 'parentHash': hex string without 0x prefix"
+//   )
+//   await baseRequest(t, server, req, 200, expectRes)
+// })
 
 tape(`${method}: call with invalid hex string as block hash`, async (t) => {
   const { server } = baseSetup({ engine: true })

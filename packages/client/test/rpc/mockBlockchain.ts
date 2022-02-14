@@ -28,7 +28,8 @@ export function mockBlockchain(options: any = {}) {
     ],
     uncleHeaders: [],
   }
-  return {
+
+  const mockedBlockchainData = {
     blocks: { latest: block },
     getBlock: async (val: any) => {
       if (Buffer.isBuffer(val) && val.equals(Buffer.alloc(32))) {
@@ -39,5 +40,12 @@ export function mockBlockchain(options: any = {}) {
     getLatestHeader: () => {
       return Block.fromBlockData().header
     },
+    getLatestBlock: () => {
+      return Block.fromBlockData()
+    },
+  }
+  return {
+    ...mockedBlockchainData,
+    copy: () => mockedBlockchainData,
   }
 }

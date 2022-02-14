@@ -192,7 +192,7 @@ export default class EthereumClient {
         let count = 0
         // Special verbose tx execution mode triggered by BLOCK_NUMBER[*]
         // Useful e.g. to trace slow txs
-        const allTxs = txHashes.length === 1 && txHashes[0] === '*' ? true : false
+        const allTxs = txHashes.length === 1 && txHashes[0] === '*'
         for (const tx of block.transactions) {
           const txHash = bufferToHex(tx.hash())
           if (allTxs || txHashes.includes(txHash)) {

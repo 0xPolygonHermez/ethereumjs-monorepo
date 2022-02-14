@@ -119,7 +119,7 @@ export function createClient(clientOpts: any = {}) {
 export function baseSetup(clientOpts: any = {}) {
   const client = createClient(clientOpts)
   const manager = createManager(client)
-  const server = startRPC(manager.getMethods(clientOpts.engine === true))
+  const server = startRPC(manager.getMethods(clientOpts.engine))
   return { server, manager, client }
 }
 
