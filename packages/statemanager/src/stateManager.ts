@@ -148,6 +148,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
   _accountCache?: AccountCache
   _storageCache?: StorageCache
 
+  _customTouched: Set<AddressHex>
   _trie: Trie
   _storageTries: { [key: string]: Trie }
   _codeCache: { [key: string]: Uint8Array }
@@ -212,7 +213,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
     this._originalStorageCache = new Map()
     this._accessedStorage = [new Map()]
     this._accessedStorageReverted = [new Map()]
-
+    this._customTouched = new Set()
     this.touchedJournal = new Journaling<string>()
 
     this._prefixCodeHashes = opts.prefixCodeHashes ?? true
@@ -365,6 +366,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
    */
   protected touchAccount(address: Address): void {
     this.touchedJournal.addJournalItem(address.toString().slice(2))
+    this._customTouched.add(address.buf.toString('hex'))
   }
 
   /**
@@ -666,6 +668,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
     }
     this._checkpointCount++
     this.touchedJournal.checkpoint()
+    this._customTouched = new Set()
   }
 
   /**
