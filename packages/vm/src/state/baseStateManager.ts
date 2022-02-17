@@ -28,6 +28,7 @@ export abstract class BaseStateManager {
 
   _touched: Set<AddressHex>
   _touchedStack: Set<AddressHex>[]
+  _customTouched: Set<AddressHex>
   _originalStorageCache: Map<AddressHex, Map<AddressHex, Buffer>>
 
   // EIP-2929 address/storage trackers.
@@ -67,6 +68,7 @@ export abstract class BaseStateManager {
     this._common = common
 
     this._touched = new Set()
+    this._customTouched = new Set()
     this._touchedStack = []
     this._originalStorageCache = new Map()
 
@@ -129,6 +131,7 @@ export abstract class BaseStateManager {
    */
   touchAccount(address: Address): void {
     this._touched.add(address.buf.toString('hex'))
+    this._customTouched.add(address.buf.toString('hex'))
   }
 
   abstract putContractCode(address: Address, value: Buffer): Promise<void>
@@ -196,6 +199,7 @@ export abstract class BaseStateManager {
   async checkpoint(): Promise<void> {
     this._cache.checkpoint()
     this._touchedStack.push(new Set(Array.from(this._touched)))
+    this._customTouched = new Set()
     this._accessedStorage.push(new Map())
     this._checkpointCount++
   }
