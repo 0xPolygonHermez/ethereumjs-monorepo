@@ -1,5 +1,5 @@
 {
-  "name": "@ethereumjs/blockchain",
+  "name": "@polygon-hermez/blockchain",
   "version": "5.5.1",
   "description": "A module to store and interact with blocks",
   "license": "MPL-2.0",

@@ -1,5 +1,5 @@
 {
-  "name": "@ethereumjs/vm",
+  "name": "@polygon-hermez/vm",
   "version": "5.7.1",
   "description": "An Ethereum VM implementation",
   "license": "MPL-2.0",

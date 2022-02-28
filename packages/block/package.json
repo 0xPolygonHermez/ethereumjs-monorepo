@@ -1,5 +1,5 @@
 {
-  "name": "@ethereumjs/block",
+  "name": "@polygon-hermez/block",
   "version": "3.6.1",
   "description": "Provides Block serialization and help functions",
   "license": "MPL-2.0",

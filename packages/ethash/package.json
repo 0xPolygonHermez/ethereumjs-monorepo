@@ -1,5 +1,5 @@
 {
-  "name": "@ethereumjs/ethash",
+  "name": "@polygon-hermez/ethash",
   "version": "1.1.0",
   "description": "An ethash implementation in JavaScript",
   "license": "MPL-2.0",

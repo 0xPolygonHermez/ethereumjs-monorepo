@@ -1,5 +1,5 @@
 {
-  "name": "@ethereumjs/tx",
+  "name": "@polygon-hermez/tx",
   "version": "3.5.0",
   "description": "A simple module for creating, manipulating and signing Ethereum transactions",
   "license": "MPL-2.0",
