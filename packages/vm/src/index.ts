@@ -1,4 +1,4 @@
-import { SecureTrie as Trie } from 'merkle-patricia-tree'
+import { CheckpointTrie as Trie } from 'merkle-patricia-tree'
 import { Account, Address, BNLike } from 'ethereumjs-util'
 import Blockchain from '@ethereumjs/blockchain'
 import Common, { Chain } from '@ethereumjs/common'
@@ -71,7 +71,7 @@ export interface VMOpts {
    */
   stateManager?: StateManager
   /**
-   * A {@link SecureTrie} instance for the state tree (ignored if stateManager is passed)
+   * A {@link CheckpointTrie} instance for the state tree (ignored if stateManager is passed)
    * @deprecated - will be removed in next major version release
    */
   state?: Trie

@@ -1,7 +1,7 @@
 import { Hardfork } from '@ethereumjs/common'
 import VM from '@ethereumjs/vm'
 import { DefaultStateManager } from '@ethereumjs/vm/dist/state'
-import { SecureTrie as Trie } from 'merkle-patricia-tree'
+import { CheckpointTrie as Trie } from 'merkle-patricia-tree'
 import { short } from '../../util'
 import { debugCodeReplayBlock } from '../../util/debug'
 import { Event } from '../../types'

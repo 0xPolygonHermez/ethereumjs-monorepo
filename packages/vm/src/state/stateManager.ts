@@ -1,4 +1,4 @@
-import { SecureTrie as Trie } from 'merkle-patricia-tree'
+import { CheckpointTrie as Trie } from 'merkle-patricia-tree'
 import {
   Account,
   Address,
@@ -45,7 +45,7 @@ export interface DefaultStateManagerOpts {
    */
   common?: Common
   /**
-   * A {@link SecureTrie} instance
+   * A {@link CheckpointTrie} instance
    */
   trie?: Trie
 }

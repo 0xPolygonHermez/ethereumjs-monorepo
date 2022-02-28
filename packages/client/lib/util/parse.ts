@@ -2,7 +2,7 @@ import { URL } from 'url'
 import { Multiaddr, multiaddr } from 'multiaddr'
 import { BlockHeader } from '@ethereumjs/block'
 import Common, { Hardfork } from '@ethereumjs/common'
-import { SecureTrie as Trie } from 'merkle-patricia-tree'
+import { CheckpointTrie as Trie } from 'merkle-patricia-tree'
 import {
   Account,
   BN,
