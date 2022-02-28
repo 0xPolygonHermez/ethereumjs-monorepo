@@ -1,6 +1,6 @@
 {
-  "name": "@ethereumjs/vm",
-  "version": "6.4.2",
+  "name": "@polygon-hermez/vm",
+  "version": "5.7.1",
   "description": "An Ethereum VM implementation",
   "keywords": [
     "ethereum",

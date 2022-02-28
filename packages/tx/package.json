@@ -1,6 +1,6 @@
 {
-  "name": "@ethereumjs/tx",
-  "version": "4.1.2",
+  "name": "@polygon-hermez/tx",
+  "version": "3.5.0",
   "description": "A simple module for creating, manipulating and signing Ethereum transactions",
   "keywords": [
     "ethereum",
