@@ -208,7 +208,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
 
     this._checkpointCount = 0
 
-    this._trie = opts.trie ?? new Trie({ useKeyHashing: true })
+    this._trie = opts.trie ?? new Trie({ useKeyHashing: false })
     this._storageTries = {}
     this._codeCache = {}
 
@@ -832,7 +832,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
 
     // This returns the account if the proof is valid.
     // Verify that it matches the reported account.
-    const value = await new Trie({ useKeyHashing: true }).verifyProof(rootHash, key, accountProof)
+    const value = await new Trie({ useKeyHashing: false }).verifyProof(rootHash, key, accountProof)
 
     if (value === null) {
       // Verify that the account is empty in the proof.
@@ -878,7 +878,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
       const storageProof = stProof.proof.map((value: PrefixedHexString) => hexStringToBytes(value))
       const storageValue = setLengthLeft(hexStringToBytes(stProof.value), 32)
       const storageKey = hexStringToBytes(stProof.key)
-      const proofValue = await new Trie({ useKeyHashing: true }).verifyProof(
+      const proofValue = await new Trie({ useKeyHashing: false }).verifyProof(
         storageRoot,
         storageKey,
         storageProof
