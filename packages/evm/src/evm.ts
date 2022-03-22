@@ -26,7 +26,7 @@ import { getActivePrecompiles } from './precompiles'
 import { TransientStorage } from './transientStorage'
 import { DefaultBlockchain } from './types'
 
-import type { InterpreterOpts, RunState } from './interpreter'
+import type { InterpreterOpts, RunState, InterpreterStep } from './interpreter'
 import type { MessageWithTo } from './message'
 import type { OpHandler, OpcodeList } from './opcodes'
 import type { AsyncDynamicGasHandler, SyncDynamicGasHandler } from './opcodes/gas'
@@ -1063,6 +1063,10 @@ export interface ExecResult {
    * Amount of data gas consumed by the transaction
    */
   dataGasUsed?: bigint
+  /**
+   * Array of evm steps to process the yx bytecode
+   */
+  evmSteps?: InterpreterStep[]
 }
 
 export function OOGResult(gasLimit: bigint): ExecResult {

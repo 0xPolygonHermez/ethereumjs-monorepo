@@ -76,6 +76,7 @@ export interface RunState {
 export interface InterpreterResult {
   runState: RunState
   exceptionError?: EvmError
+  evmSteps?: InterpreterStep[]
 }
 
 export interface InterpreterStep {
@@ -195,6 +196,7 @@ export class Interpreter {
       }
     }
     this._runState.programCounter = opts.pc ?? this._runState.programCounter
+    const evmSteps = []
     // Check that the programCounter is in range
     const pc = this._runState.programCounter
     if (pc !== 0 && (pc < 0 || pc >= this._runState.code.length)) {
@@ -216,7 +218,9 @@ export class Interpreter {
       this._runState.opCode = opCode
 
       try {
-        await this.runStep()
+        const interpreterStep = await this.runStep()
+        //Store a copy of the object
+        evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
       } catch (e: any) {
         // re-throw on non-VM errors
         if (!('errorType' in e && e.errorType === 'EvmError')) {
@@ -233,6 +237,7 @@ export class Interpreter {
     return {
       runState: this._runState,
       exceptionError: err,
+      evmSteps,
     }
   }
 
@@ -240,7 +245,7 @@ export class Interpreter {
    * Executes the opcode to which the program counter is pointing,
    * reducing its base gas cost, and increments the program counter.
    */
-  async runStep(): Promise<void> {
+  async runStep(): Promise<InterpreterStep> {
     const opInfo = this.lookupOpInfo(this._runState.opCode)
 
     let gas = BigInt(opInfo.fee)
@@ -254,6 +259,8 @@ export class Interpreter {
       // It needs the base fee, for correct gas limit calculation for the CALL opcodes
       gas = await dynamicGasHandler(this._runState, gas, this._common)
     }
+
+    const interpreterStep = await this._runStepHook(gas, gasLimitClone)
 
     if (this._evm.events.listenerCount('step') > 0 || this._evm.DEBUG) {
       // Only run this stepHook function if there is an event listener (e.g. test runner)
@@ -279,6 +286,8 @@ export class Interpreter {
     } else {
       opFn.apply(null, [this._runState, this._common])
     }
+
+    return interpreterStep
   }
 
   /**
@@ -296,7 +305,7 @@ export class Interpreter {
     return this._evm._opcodes.get(op) ?? this._evm._opcodes.get(0xfe)!
   }
 
-  async _runStepHook(dynamicFee: bigint, gasLeft: bigint): Promise<void> {
+  async _runStepHook(dynamicFee: bigint, gasLeft: bigint): Promise<InterpreterStep> {
     const opcode = this.lookupOpInfo(this._runState.opCode)
     const eventObj: InterpreterStep = {
       pc: this._runState.programCounter,
@@ -366,7 +375,12 @@ export class Interpreter {
      * @property {BigInt} memoryWordCount current size of memory in words
      * @property {Address} codeAddress the address of the code which is currently being ran (this differs from `address` in a `DELEGATECALL` and `CALLCODE` call)
      */
-    await this._evm._emit('step', eventObj)
+    if (this._vm.listenerCount('step') > 0 || this._vm.DEBUG) {
+      // Only run this stepHook function if there is an event listener (e.g. test runner)
+      // or if the vm is running in debug mode (to display opcode debug logs)
+      this._vm._emit('step', eventObj)
+    }
+    return eventObj
   }
 
   // Returns all valid jump and jumpsub destinations.
