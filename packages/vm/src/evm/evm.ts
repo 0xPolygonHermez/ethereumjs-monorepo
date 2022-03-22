@@ -18,7 +18,7 @@ import EEI from './eei'
 // eslint-disable-next-line
 import { short } from './opcodes/util'
 import { Log } from './types'
-import { default as Interpreter, InterpreterOpts, RunState } from './interpreter'
+import { default as Interpreter, InterpreterOpts, RunState, InterpreterStep } from './interpreter'
 
 const debug = createDebugLogger('vm:evm')
 const debugGas = createDebugLogger('vm:evm:gas')
@@ -74,6 +74,10 @@ export interface ExecResult {
    * Total amount of gas to be refunded from all nested calls.
    */
   gasRefund?: BN
+  /**
+   * Array of evm steps to process the yx bytecode
+   */
+  evmSteps?: InterpreterStep[]
 }
 
 export interface NewContractEvent {
@@ -510,6 +514,7 @@ export default class EVM {
         ...result,
         ...eei._env,
       },
+      evmSteps: interpreterRes.evmSteps,
       exceptionError: interpreterRes.exceptionError,
       gas: eei._gasLeft,
       gasUsed,
