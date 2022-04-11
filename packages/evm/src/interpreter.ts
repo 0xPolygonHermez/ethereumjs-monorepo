@@ -76,7 +76,7 @@ export interface RunState {
 export interface InterpreterResult {
   runState: RunState
   exceptionError?: EvmError
-  evmSteps?: InterpreterStep[]
+  evmSteps?: SimpleInterpreterStep[]
 }
 
 export interface InterpreterStep {
@@ -97,6 +97,24 @@ export interface InterpreterStep {
   address: Address
   memory: Uint8Array
   memoryWordCount: bigint
+  codeAddress: Address
+}
+
+export interface SimpleInterpreterStep {
+  pc: number
+  opcode: {
+    name: string
+    fee: number
+    dynamicFee?: BN
+    isAsync: boolean
+  }
+  gasLeft: BN
+  gasRefund: BN
+  stack: BN[]
+  returnStack: BN[]
+  depth: number
+  memory: Buffer
+  memoryWordCount: BN
   codeAddress: Address
 }
 
@@ -245,7 +263,7 @@ export class Interpreter {
    * Executes the opcode to which the program counter is pointing,
    * reducing its base gas cost, and increments the program counter.
    */
-  async runStep(): Promise<InterpreterStep> {
+  async runStep(): Promise<SimpleInterpreterStep> {
     const opInfo = this.lookupOpInfo(this._runState.opCode)
 
     let gas = BigInt(opInfo.fee)
@@ -260,7 +278,7 @@ export class Interpreter {
       gas = await dynamicGasHandler(this._runState, gas, this._common)
     }
 
-    const interpreterStep = await this._runStepHook(gas, gasLimitClone)
+    const simpleInterpreterStep = await this._runStepHook(gas, gasLimitClone)
 
     if (this._evm.events.listenerCount('step') > 0 || this._evm.DEBUG) {
       // Only run this stepHook function if there is an event listener (e.g. test runner)
@@ -287,7 +305,7 @@ export class Interpreter {
       opFn.apply(null, [this._runState, this._common])
     }
 
-    return interpreterStep
+    return simpleInterpreterStep
   }
 
   /**
@@ -305,7 +323,7 @@ export class Interpreter {
     return this._evm._opcodes.get(op) ?? this._evm._opcodes.get(0xfe)!
   }
 
-  async _runStepHook(dynamicFee: bigint, gasLeft: bigint): Promise<InterpreterStep> {
+  async _runStepHook(dynamicFee: bigint, gasLeft: bigint): Promise<SimpleInterpreterStep> {
     const opcode = this.lookupOpInfo(this._runState.opCode)
     const eventObj: InterpreterStep = {
       pc: this._runState.programCounter,
@@ -326,6 +344,24 @@ export class Interpreter {
       memoryWordCount: this._runState.memoryWordCount,
       codeAddress: this._env.codeAddress,
       stateManager: this._runState.stateManager,
+    }
+
+    const simpleInterpreterStep: SimpleInterpreterStep = {
+      pc: this._runState.programCounter,
+      gasLeft,
+      gasRefund: this._runState.gasRefund,
+      opcode: {
+        name: opcode.fullName,
+        fee: opcode.fee,
+        dynamicFee,
+        isAsync: opcode.isAsync,
+      },
+      stack: this._runState.stack._store,
+      returnStack: this._runState.returnStack._store,
+      depth: this._env.depth,
+      memory: this._runState.memory._store, // Return underlying array for backwards-compatibility
+      memoryWordCount: this._runState.memoryWordCount,
+      codeAddress: this._env.codeAddress,
     }
 
     if (this._evm.DEBUG) {
@@ -380,7 +416,7 @@ export class Interpreter {
       // or if the vm is running in debug mode (to display opcode debug logs)
       this._vm._emit('step', eventObj)
     }
-    return eventObj
+    return simpleInterpreterStep
   }
 
   // Returns all valid jump and jumpsub destinations.
