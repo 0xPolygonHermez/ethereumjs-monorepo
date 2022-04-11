@@ -18,7 +18,12 @@ import EEI from './eei'
 // eslint-disable-next-line
 import { short } from './opcodes/util'
 import { Log } from './types'
-import { default as Interpreter, InterpreterOpts, RunState, InterpreterStep } from './interpreter'
+import {
+  default as Interpreter,
+  InterpreterOpts,
+  RunState,
+  SimpleInterpreterStep,
+} from './interpreter'
 
 const debug = createDebugLogger('vm:evm')
 const debugGas = createDebugLogger('vm:evm:gas')
@@ -77,7 +82,7 @@ export interface ExecResult {
   /**
    * Array of evm steps to process the yx bytecode
    */
-  evmSteps?: InterpreterStep[]
+  evmSteps?: SimpleInterpreterStep[]
 }
 
 export interface NewContractEvent {
