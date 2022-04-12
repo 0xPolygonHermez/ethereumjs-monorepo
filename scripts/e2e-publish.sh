@@ -10,24 +10,24 @@
 set -o errexit
 
 # Should only run in Github Actions CI
-if [ -z "$GITHUB_SHA" ]; then
-  echo "==================================================================================="
-  echo "This script publishes ethereumjs-monorepo to an npm proxy registry. Only run in CI."
-  echo "==================================================================================="
-  exit 1
-fi
+# if [ -z "$GITHUB_SHA" ]; then
+#   echo "==================================================================================="
+#   echo "This script publishes ethereumjs-monorepo to an npm proxy registry. Only run in CI."
+#   echo "==================================================================================="
+#   exit 1
+# fi
 
-# Launch npm proxy registry
-verdaccio --config verdaccio.yml &
+# # Launch npm proxy registry
+# verdaccio --config verdaccio.yml &
 
-npx wait-port 4873
+# npx wait-port 4873
 
 # `npm add user`
-TOKEN=$(curl -XPUT \
-  -H "Content-type: application/json" \
-  -d '{ "name": "test", "password": "test" }' \
-  'http://localhost:4873/-/user/org.couchdb.user:test')
-
+# TOKEN=$(curl -XPUT \
+#   -H "Content-type: application/json" \
+#   -d '{ "name": "test4", "password": "test" }' \
+#   'http://localhost:4873/-/user/org.couchdb.user:test')
+TOKEN="G/vWRQJLaptsvAJyYVSYhA=="
 npm set registry "http://localhost:4873"
 npm set //localhost:4873/:_authToken $TOKEN
 

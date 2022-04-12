@@ -567,15 +567,7 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x40,
     async function (runState) {
       const number = runState.stack.pop()
-
-      const diff = runState.eei.getBlockNumber().sub(number)
-      // block lookups must be within the past 256 blocks
-      if (diff.gtn(256) || diff.lten(0)) {
-        runState.stack.push(new BN(0))
-        return
-      }
-
-      const hash = await runState.eei.getBlockHash(number)
+      const hash = await runState.eei.getBatchHash(number)
       runState.stack.push(hash)
     },
   ],

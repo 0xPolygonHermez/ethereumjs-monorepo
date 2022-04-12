@@ -1,5 +1,5 @@
 import { debug as createDebugLogger } from 'debug'
-import { Account, Address, BN, MAX_UINT64 } from 'ethereumjs-util'
+import { Account, Address, BN, MAX_UINT64, toBuffer } from 'ethereumjs-util'
 import { Block } from '@ethereumjs/block'
 import Blockchain from '@ethereumjs/blockchain'
 import Common, { ConsensusAlgorithm } from '@ethereumjs/common'
@@ -8,6 +8,10 @@ import { VmError, ERROR } from '../exceptions'
 import Message from './message'
 import EVM, { EVMResult } from './evm'
 import { Log } from './types'
+const ethers = require('ethers')
+
+const ADDRESS_SYSTEM = '0x0000000000000000000000000000000000000000'
+const STATE_ROOT_STORAGE_POS = 0
 
 const debugGas = createDebugLogger('vm:eei:gas')
 
@@ -349,6 +353,25 @@ export default class EEI {
   async getBlockHash(num: BN): Promise<BN> {
     const block = await this._env.blockchain.getBlock(num)
     return new BN(block.hash())
+  }
+
+  /**
+   * Returns Gets the hash of one of the 256 most recent complete blocks.
+   * @param num - Number of block
+   */
+  async getBatchHash(num: BN): Promise<BN> {
+    const stateRootPos = ethers.utils.solidityKeccak256(
+      ['uint256', 'uint256'],
+      [Number(num) - 1, STATE_ROOT_STORAGE_POS]
+    )
+    const hash = await this._state.getContractStorage(
+      new Address(toBuffer(ADDRESS_SYSTEM)),
+      toBuffer(stateRootPos)
+    )
+    if (!hash || hash.length === 0) {
+      return new BN(0)
+    }
+    return new BN(hash)
   }
 
   /**
