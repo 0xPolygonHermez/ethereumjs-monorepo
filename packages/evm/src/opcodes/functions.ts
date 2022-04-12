@@ -565,16 +565,9 @@ export const handlers: Map<number, OpHandler> = new Map([
     async function (runState) {
       const number = runState.stack.pop()
 
-      const diff = runState.interpreter.getBlockNumber() - number
-      // block lookups must be within the past 256 blocks
-      if (diff > BigInt(256) || diff <= BigInt(0)) {
-        runState.stack.push(BigInt(0))
-        return
-      }
-
-      const block = await runState.blockchain.getBlock(Number(number))
-
-      runState.stack.push(bytesToBigInt(block.hash()))
+      const hash = await runState.interpreter.getBatchHash(number)
+    
+      runState.stack.push(hash)
     },
   ],
   // 0x41: COINBASE
