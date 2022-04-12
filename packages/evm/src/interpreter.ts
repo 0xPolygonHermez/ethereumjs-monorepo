@@ -1,5 +1,13 @@
 import { ConsensusAlgorithm } from '@ethereumjs/common'
-import { Account, MAX_UINT64, bigIntToHex, bytesToBigInt, bytesToHex } from '@ethereumjs/util'
+import {
+  Account,
+  Address,
+  MAX_UINT64,
+  bigIntToHex,
+  bytesToBigInt,
+  bytesToHex,
+  hexStringToBytes,
+} from '@ethereumjs/util'
 import { debug as createDebugLogger } from 'debug'
 
 import { EOF } from './eof'
@@ -13,7 +21,11 @@ import type { EVM, EVMResult } from './evm'
 import type { AsyncOpHandler, OpHandler, Opcode } from './opcodes'
 import type { Block, Blockchain, Log } from './types'
 import type { Common, EVMStateManagerInterface } from '@ethereumjs/common'
-import type { Address } from '@ethereumjs/util'
+
+const ethers = require('ethers')
+
+const ADDRESS_SYSTEM = '0x0000000000000000000000000000000000000000'
+const STATE_ROOT_STORAGE_POS = 0
 
 const debugGas = createDebugLogger('evm:eei:gas')
 
@@ -706,6 +718,25 @@ export class Interpreter {
    */
   getBlockNumber(): bigint {
     return this._env.block.header.number
+  }
+
+  /**
+   * Returns Gets the hash of one of the 256 most recent complete blocks.
+   * @param num - Number of block
+   */
+  async getBatchHash(num: bigint): Promise<bigint> {
+    const stateRootPos = ethers.utils.solidityKeccak256(
+      ['uint256', 'uint256'],
+      [Number(num) - 1, STATE_ROOT_STORAGE_POS]
+    )
+    const hash = await this._stateManager.getContractStorage(
+      new Address(hexStringToBytes(ADDRESS_SYSTEM)),
+      hexStringToBytes(stateRootPos)
+    )
+    if (!hash || hash.length === 0) {
+      return BigInt(0)
+    }
+    return bytesToBigInt(hash)
   }
 
   /**
