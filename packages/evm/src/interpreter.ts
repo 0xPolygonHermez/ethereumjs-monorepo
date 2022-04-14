@@ -719,7 +719,7 @@ export class Interpreter {
   async getBatchHash(num: bigint): Promise<bigint> {
     const stateRootPos = ethers.utils.solidityKeccak256(
       ['uint256', 'uint256'],
-      [Number(num) - 1, STATE_ROOT_STORAGE_POS]
+      [Number(num), STATE_ROOT_STORAGE_POS]
     )
     const hash = await this._stateManager.getContractStorage(
       new Address(toBuffer(ADDRESS_SYSTEM)),

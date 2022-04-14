@@ -1,6 +1,6 @@
 {
   "name": "@polygon-hermez/vm",
-  "version": "5.7.6",
+  "version": "5.7.8",
   "description": "An Ethereum VM implementation",
   "keywords": [
     "ethereum",
@@ -68,7 +68,8 @@
     "functional-red-black-tree": "^1.0.1",
     "mcl-wasm": "^0.7.1",
     "merkle-patricia-tree": "^4.2.3",
-    "rustbn.js": "~0.2.0"
+    "rustbn.js": "~0.2.0",
+    "@polygon-hermez/zkevm-commonjs": "github:hermeznetwork/zkevm-commonjs#v0.0.17"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.0.12",
