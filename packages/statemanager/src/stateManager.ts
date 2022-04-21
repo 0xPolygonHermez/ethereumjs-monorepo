@@ -399,9 +399,10 @@ export class DefaultStateManager implements EVMStateManagerInterface {
   async putContractCode(address: Address, value: Uint8Array): Promise<void> {
     const codeHash = keccak256(value)
 
-    if (equalsBytes(codeHash, KECCAK256_NULL)) {
-      return
-    }
+    // Commented to allow deleting contract bytecode directly
+    // if (codeHash.equals(KECCAK256_NULL)) {
+    //   return
+    // }
 
     const key = this._prefixCodeHashes ? concatBytes(CODEHASH_PREFIX, codeHash) : codeHash
     await this._trie.database().put(key, value)
