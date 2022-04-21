@@ -1070,7 +1070,33 @@ export class Interpreter {
    * @param toAddress - Beneficiary address
    */
   async selfDestruct(toAddress: Address): Promise<void> {
-    return this._selfDestruct(toAddress)
+    // return this._selfDestruct(toAddress)
+    return this._customSelfDestruct(toAddress)
+  }
+
+  async _customSelfDestruct(toAddress: Address): Promise<void> {
+    // only add to refund if this is the first selfdestruct for the address
+    if (this._result.selfdestruct[bytesToHex(this._env.address.bytes)] === undefined) {
+      this.refundGas(this._common.param('gasPrices', 'selfdestructRefund'))
+    }
+
+    // clear contract bytecode
+    await this._stateManager.putContractCode(this._env.address, hexStringToBytes('0x'))
+
+    // Add to beneficiary balance
+    let toAccount = await this._stateManager.getAccount(toAddress)
+    if (!toAccount) {
+      toAccount = new Account()
+    }
+    toAccount.balance += this._env.contract.balance
+    await this._stateManager.putAccount(toAddress, toAccount, true)
+
+    // Subtract from contract balance
+    await this._stateManager.modifyAccountFields(this._env.address, {
+      balance: BigInt(0),
+    })
+
+    trap(ERROR.STOP)
   }
 
   async _selfDestruct(toAddress: Address): Promise<void> {
