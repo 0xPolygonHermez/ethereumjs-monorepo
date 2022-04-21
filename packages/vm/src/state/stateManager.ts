@@ -115,9 +115,10 @@ export default class DefaultStateManager extends BaseStateManager implements Sta
   async putContractCode(address: Address, value: Buffer): Promise<void> {
     const codeHash = keccak256(value)
 
-    if (codeHash.equals(KECCAK256_NULL)) {
-      return
-    }
+    // Commented to allow deleting contract bytecode directly
+    // if (codeHash.equals(KECCAK256_NULL)) {
+    //   return
+    // }
 
     await this._trie.db.put(codeHash, value)
 
