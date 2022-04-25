@@ -455,7 +455,6 @@ export default class EEI {
     trap(ERROR.STOP)
   }
 
-
   async _selfDestruct(toAddress: Address): Promise<void> {
     // only add to refund if this is the first selfdestruct for the address
     if (!this._result.selfdestruct[this._env.address.buf.toString('hex')]) {

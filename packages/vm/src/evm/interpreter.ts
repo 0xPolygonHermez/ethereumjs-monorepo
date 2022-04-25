@@ -81,6 +81,7 @@ export default class Interpreter {
   _state: StateManager
   _runState: RunState
   _eei: EEI
+  _evmStepAux: SimpleInterpreterStep | null = null
 
   // Opcode debuggers (e.g. { 'push': [debug Object], 'sstore': [debug Object], ...})
   private opDebuggers: { [key: string]: (debug: string) => void } = {}
@@ -103,6 +104,7 @@ export default class Interpreter {
       eei: this._eei,
       shouldDoJumpAnalysis: true,
     }
+    this._evmStepAux = null
   }
 
   async run(code: Buffer, opts: InterpreterOpts = {}): Promise<InterpreterResult> {
@@ -135,6 +137,11 @@ export default class Interpreter {
         //Store a copy of the object
         evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
       } catch (e: any) {
+        //Add evmStepAux to steps array
+        if (this._evmStepAux) {
+          evmSteps.push(JSON.parse(JSON.stringify(this._evmStepAux)))
+          this._evmStepAux = null
+        }
         // re-throw on non-VM errors
         if (!('errorType' in e && e.errorType === 'VmError')) {
           throw e
@@ -174,6 +181,17 @@ export default class Interpreter {
     }
 
     const simpleInterpreterStep = await this._runStepHook(gas, gasLimitClone)
+
+    // Add aux evm step for revert/invalid opcodes
+    if (
+      opInfo.name === 'STOP' ||
+      opInfo.name === 'INVALID' ||
+      opInfo.name === 'SELFDESTRUCT' ||
+      opInfo.name === 'REVERT'
+    ) {
+      // Copy step to aux to use it in case of reverted tx
+      this._evmStepAux = simpleInterpreterStep
+    }
 
     // Check for invalid opcode
     if (opInfo.name === 'INVALID') {
