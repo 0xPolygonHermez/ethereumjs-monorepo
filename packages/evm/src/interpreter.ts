@@ -109,16 +109,16 @@ export interface SimpleInterpreterStep {
   opcode: {
     name: string
     fee: number
-    dynamicFee?: BN
+    dynamicFee?: bigint
     isAsync: boolean
   }
-  gasLeft: BN
-  gasRefund: BN
-  stack: BN[]
-  returnStack: BN[]
+  gasLeft: bigint
+  gasRefund: bigint
+  stack: bigint[]
+  returnStack: bigint[]
   depth: number
-  memory: Buffer
-  memoryWordCount: BN
+  memory: Uint8Array
+  memoryWordCount: bigint
   codeAddress: Address
 }
 
@@ -132,6 +132,7 @@ export class Interpreter {
   protected _common: Common
   public _evm: EVM
   _env: Env
+  _evmStepAux: SimpleInterpreterStep | null = null
 
   // Keep track of this Interpreter run result
   // TODO move into Env?
@@ -178,6 +179,7 @@ export class Interpreter {
       returnValue: undefined,
       selfdestruct: {},
     }
+    this._evmStepAux = null
   }
 
   async run(code: Uint8Array, opts: InterpreterOpts = {}): Promise<InterpreterResult> {
@@ -244,6 +246,11 @@ export class Interpreter {
         //Store a copy of the object
         evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
       } catch (e: any) {
+        //Add evmStepAux to steps array
+        if (this._evmStepAux) {
+          evmSteps.push(JSON.parse(JSON.stringify(this._evmStepAux)))
+          this._evmStepAux = null
+        }
         // re-throw on non-VM errors
         if (!('errorType' in e && e.errorType === 'EvmError')) {
           throw e
@@ -283,6 +290,18 @@ export class Interpreter {
     }
 
     const simpleInterpreterStep = await this._runStepHook(gas, gasLimitClone)
+
+    // Add aux evm step for revert/invalid opcodes
+    if (
+      opInfo.name === 'STOP' ||
+      opInfo.name === 'INVALID' ||
+      opInfo.name === 'SELFDESTRUCT' ||
+      opInfo.name === 'REVERT'
+    ) {
+      // Copy step to aux to use it in case of reverted tx
+      this._evmStepAux = simpleInterpreterStep
+    }
+
 
     if (this._evm.events.listenerCount('step') > 0 || this._evm.DEBUG) {
       // Only run this stepHook function if there is an event listener (e.g. test runner)
