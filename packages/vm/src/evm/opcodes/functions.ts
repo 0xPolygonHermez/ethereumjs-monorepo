@@ -921,7 +921,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.eei.call(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xf2: CALLCODE
@@ -943,7 +943,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.eei.callCode(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xf4: DELEGATECALL
@@ -966,7 +966,8 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.eei.callDelegate(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0x06: STATICCALL
@@ -989,7 +990,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.eei.callStatic(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xf3: RETURN

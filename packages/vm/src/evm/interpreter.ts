@@ -71,6 +71,7 @@ export interface SimpleInterpreterStep {
   memory: Buffer
   memoryWordCount: BN
   codeAddress: Address
+  callOpcodes?: SimpleInterpreterStep[]
 }
 
 /**
@@ -136,6 +137,12 @@ export default class Interpreter {
         const interpreterStep = await this.runStep()
         //Store a copy of the object
         evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
+        //If has extra steps from a call, add them to the array
+        if (interpreterStep.callOpcodes) {
+          interpreterStep.callOpcodes.forEach(function (step) {
+            evmSteps.push(JSON.parse(JSON.stringify(step)))
+          })
+        }
       } catch (e: any) {
         //Add evmStepAux to steps array
         if (this._evmStepAux) {
@@ -205,10 +212,15 @@ export default class Interpreter {
 
     // Execute opcode handler
     const opFn = this.getOpHandler(opInfo)
+    let fnRes: any
     if (opInfo.isAsync) {
-      await (opFn as AsyncOpHandler).apply(null, [this._runState, this._vm._common])
+      fnRes = await (opFn as AsyncOpHandler).apply(null, [this._runState, this._vm._common])
     } else {
-      opFn.apply(null, [this._runState, this._vm._common])
+      fnRes = opFn.apply(null, [this._runState, this._vm._common])
+    }
+    // If is a CALL, append the call opcodes to the interpreter object
+    if (['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE'].includes(opInfo.name) && fnRes) {
+      simpleInterpreterStep.callOpcodes = fnRes.evmSteps
     }
 
     return simpleInterpreterStep

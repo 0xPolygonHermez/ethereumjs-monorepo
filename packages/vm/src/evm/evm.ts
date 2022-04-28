@@ -44,6 +44,10 @@ export interface EVMResult {
    * Contains the results from running the code, if any, as described in {@link runCode}
    */
   execResult: ExecResult
+  /**
+   * Array of evm steps to process the tx bytecode
+   */
+  evmSteps?: SimpleInterpreterStep[]
 }
 
 /**
@@ -80,7 +84,7 @@ export interface ExecResult {
    */
   gasRefund?: BN
   /**
-   * Array of evm steps to process the yx bytecode
+   * Array of evm steps to process the tx bytecode
    */
   evmSteps?: SimpleInterpreterStep[]
 }
@@ -299,6 +303,7 @@ export default class EVM {
     }
 
     return {
+      evmSteps: result.evmSteps,
       gasUsed: result.gasUsed,
       execResult: result,
     }

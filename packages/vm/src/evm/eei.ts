@@ -58,6 +58,13 @@ export interface RunResult {
 }
 
 /**
+ * Result for object of a CALL
+ */
+export interface BaseCallResult {
+  returnCode: BN
+  results?: EVMResult
+}
+/**
  * External interface made available to EVM bytecode. Modeled after
  * the ewasm EEI [spec](https://github.com/ewasm/design/blob/master/eth_interface.md).
  * It includes methods for accessing/modifying state, calling or creating contracts, access
@@ -495,7 +502,7 @@ export default class EEI {
   /**
    * Sends a message with arbitrary data to a given address path.
    */
-  async call(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BN> {
+  async call(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -512,7 +519,7 @@ export default class EEI {
   /**
    * Message-call into this account with an alternative account's code.
    */
-  async callCode(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BN> {
+  async callCode(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -532,7 +539,12 @@ export default class EEI {
    * state modifications. This includes log, create, selfdestruct and call with
    * a non-zero value.
    */
-  async callStatic(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BN> {
+  async callStatic(
+    gasLimit: BN,
+    address: Address,
+    value: BN,
+    data: Buffer
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -550,7 +562,12 @@ export default class EEI {
    * Message-call into this account with an alternative account’s code, but
    * persisting the current values for sender and value.
    */
-  async callDelegate(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BN> {
+  async callDelegate(
+    gasLimit: BN,
+    address: Address,
+    value: BN,
+    data: Buffer
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.caller,
       gasLimit,
@@ -566,7 +583,7 @@ export default class EEI {
     return this._baseCall(msg)
   }
 
-  async _baseCall(msg: Message): Promise<BN> {
+  async _baseCall(msg: Message): Promise<BaseCallResult> {
     const selfdestruct = { ...this._result.selfdestruct }
     msg.selfdestruct = selfdestruct
 
@@ -578,7 +595,9 @@ export default class EEI {
       this._env.depth >= this._common.param('vm', 'stackLimit') ||
       (msg.delegatecall !== true && this._env.contract.balance.lt(msg.value))
     ) {
-      return new BN(0)
+      return {
+        returnCode: new BN(0),
+      }
     }
 
     const results = await this._evm.executeMessage(msg)
@@ -606,7 +625,10 @@ export default class EEI {
       this._env.contract = account
     }
 
-    return this._getReturnCode(results)
+    return {
+      returnCode: this._getReturnCode(results),
+      results,
+    }
   }
 
   /**
