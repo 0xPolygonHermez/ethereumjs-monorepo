@@ -45,6 +45,14 @@ export interface RunResult {
   selfdestruct: { [k: string]: Uint8Array }
 }
 
+/**
+ * Result for object of a CALL
+ */
+export interface BaseCallResult {
+  returnCode: bigint
+  results?: EVMResult
+}
+
 export interface Env {
   address: Address
   caller: Address
@@ -128,6 +136,7 @@ export interface SimpleInterpreterStep {
   memory: Uint8Array
   memoryWordCount: bigint
   codeAddress: Address
+  callOpcodes?: SimpleInterpreterStep[]
 }
 
 /**
@@ -253,6 +262,12 @@ export class Interpreter {
         const interpreterStep = await this.runStep()
         //Store a copy of the object
         evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
+        //If has extra steps from a call, add them to the array
+        if (interpreterStep.callOpcodes) {
+          interpreterStep.callOpcodes.forEach(function (step) {
+            evmSteps.push(JSON.parse(JSON.stringify(step)))
+          })
+        }
       } catch (e: any) {
         //Add evmStepAux to steps array
         if (this._evmStepAux) {
@@ -328,11 +343,15 @@ export class Interpreter {
 
     // Execute opcode handler
     const opFn = this.getOpHandler(opInfo)
-
+    let fnRes: any
     if (opInfo.isAsync) {
-      await (opFn as AsyncOpHandler).apply(null, [this._runState, this._common])
+      fnRes = await (opFn as AsyncOpHandler).apply(null, [this._runState, this._vm._common])
     } else {
-      opFn.apply(null, [this._runState, this._common])
+      fnRes = opFn.apply(null, [this._runState, this._vm._common])
+    }
+    // If is a CALL, append the call opcodes to the interpreter object
+    if (['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE'].includes(opInfo.name) && fnRes) {
+      simpleInterpreterStep.callOpcodes = fnRes.evmSteps
     }
 
     return simpleInterpreterStep
@@ -821,7 +840,12 @@ export class Interpreter {
   /**
    * Sends a message with arbitrary data to a given address path.
    */
-  async call(gasLimit: bigint, address: Address, value: bigint, data: Uint8Array): Promise<bigint> {
+  async call(
+    gasLimit: bigint,
+    address: Address,
+    value: bigint,
+    data: Uint8Array
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -843,7 +867,7 @@ export class Interpreter {
     address: Address,
     value: bigint,
     data: Uint8Array
-  ): Promise<bigint> {
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._runState.auth,
       gasLimit,
@@ -866,7 +890,7 @@ export class Interpreter {
     address: Address,
     value: bigint,
     data: Uint8Array
-  ): Promise<bigint> {
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -891,7 +915,7 @@ export class Interpreter {
     address: Address,
     value: bigint,
     data: Uint8Array
-  ): Promise<bigint> {
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -914,7 +938,7 @@ export class Interpreter {
     address: Address,
     value: bigint,
     data: Uint8Array
-  ): Promise<bigint> {
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.caller,
       gasLimit,
@@ -930,7 +954,7 @@ export class Interpreter {
     return this._baseCall(msg)
   }
 
-  async _baseCall(msg: Message): Promise<bigint> {
+  async _baseCall(msg: Message): Promise<BaseCallResult> {
     const selfdestruct = { ...this._result.selfdestruct }
     msg.selfdestruct = selfdestruct
     msg.gasRefund = this._runState.gasRefund
@@ -943,7 +967,9 @@ export class Interpreter {
       this._env.depth >= Number(this._common.param('vm', 'stackLimit')) ||
       (msg.delegatecall !== true && this._env.contract.balance < msg.value)
     ) {
-      return BigInt(0)
+      return {
+        returnCode: BigInt(0),
+      }
     }
 
     const results = await this._evm.runCall({ message: msg })
@@ -975,7 +1001,10 @@ export class Interpreter {
       this._runState.gasRefund = results.execResult.gasRefund ?? BigInt(0)
     }
 
-    return this._getReturnCode(results)
+    return {
+      returnCode: this._getReturnCode(results),
+      results,
+    }
   }
 
   /**

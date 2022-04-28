@@ -437,6 +437,7 @@ export class EVM implements EVMInterface {
     }
 
     return {
+      evmSteps: result.evmSteps,
       execResult: result,
     }
   }
@@ -1024,6 +1025,10 @@ export interface EVMResult {
    * Contains the results from running the code, if any, as described in {@link runCode}
    */
   execResult: ExecResult
+  /**
+   * Array of evm steps to process the tx bytecode
+   */
+  evmSteps?: SimpleInterpreterStep[]
 }
 
 /**
@@ -1064,7 +1069,7 @@ export interface ExecResult {
    */
   dataGasUsed?: bigint
   /**
-   * Array of evm steps to process the yx bytecode
+   * Array of evm steps to process the tx bytecode
    */
   evmSteps?: SimpleInterpreterStep[]
 }
