@@ -985,7 +985,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.interpreter.call(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xf2: CALLCODE
@@ -1007,7 +1007,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.interpreter.callCode(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xf4: DELEGATECALL
@@ -1030,7 +1030,8 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.interpreter.callDelegate(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0xf6: AUTH
@@ -1118,7 +1119,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.interpreter.authcall(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, retOffset, retLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xfa: STATICCALL
@@ -1141,7 +1142,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const ret = await runState.interpreter.callStatic(gasLimit, toAddress, value, data)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
     },
   ],
   // 0xf3: RETURN
