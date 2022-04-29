@@ -1143,6 +1143,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0xf3: RETURN
