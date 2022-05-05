@@ -655,6 +655,7 @@ export class EVM implements EVMInterface {
     }
 
     return {
+      evmSteps: result.evmSteps,
       createdAddress: message.to,
       execResult: result,
     }
