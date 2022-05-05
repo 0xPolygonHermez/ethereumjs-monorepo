@@ -468,6 +468,7 @@ export default class EVM {
     }
 
     return {
+      evmSteps: result.evmSteps,
       gasUsed: result.gasUsed,
       createdAddress: message.to,
       execResult: result,

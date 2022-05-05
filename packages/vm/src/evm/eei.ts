@@ -634,7 +634,12 @@ export default class EEI {
   /**
    * Creates a new contract with a given value.
    */
-  async create(gasLimit: BN, value: BN, data: Buffer, salt: Buffer | null = null): Promise<BN> {
+  async create(
+    gasLimit: BN,
+    value: BN,
+    data: Buffer,
+    salt: Buffer | null = null
+  ): Promise<BaseCallResult> {
     const selfdestruct = { ...this._result.selfdestruct }
     const msg = new Message({
       caller: this._env.address,
@@ -654,12 +659,16 @@ export default class EEI {
       this._env.depth >= this._common.param('vm', 'stackLimit') ||
       (msg.delegatecall !== true && this._env.contract.balance.lt(msg.value))
     ) {
-      return new BN(0)
+      return {
+        returnCode: new BN(0),
+      }
     }
 
     // EIP-2681 check
     if (this._env.contract.nonce.gte(MAX_UINT64)) {
-      return new BN(0)
+      return {
+        returnCode: new BN(0),
+      }
     }
     this._env.contract.nonce.iaddn(1)
     await this._state.putAccount(this._env.address, this._env.contract)
@@ -691,18 +700,24 @@ export default class EEI {
       this._env.contract = account
       if (results.createdAddress) {
         // push the created address to the stack
-        return new BN(results.createdAddress.buf)
+        return {
+          returnCode: new BN(results.createdAddress.buf),
+          results,
+        }
       }
     }
 
-    return this._getReturnCode(results)
+    return {
+      returnCode: this._getReturnCode(results),
+      results,
+    }
   }
 
   /**
    * Creates a new contract with a given value. Generates
    * a deterministic address via CREATE2 rules.
    */
-  async create2(gasLimit: BN, value: BN, data: Buffer, salt: Buffer): Promise<BN> {
+  async create2(gasLimit: BN, value: BN, data: Buffer, salt: Buffer): Promise<BaseCallResult> {
     return this.create(gasLimit, value, data, salt)
   }
 

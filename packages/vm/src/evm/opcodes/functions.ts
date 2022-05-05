@@ -872,7 +872,8 @@ export const handlers: Map<number, OpHandler> = new Map([
       }
 
       const ret = await runState.eei.create(gasLimit, value, data)
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0xf5: CREATE2
@@ -899,7 +900,8 @@ export const handlers: Map<number, OpHandler> = new Map([
         data,
         salt.toArrayLike(Buffer, 'be', 32)
       )
-      runState.stack.push(ret)
+      runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0xf1: CALL
@@ -922,6 +924,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0xf2: CALLCODE
@@ -944,6 +947,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
+      return ret.results
     },
   ],
   // 0xf4: DELEGATECALL

@@ -219,7 +219,12 @@ export default class Interpreter {
       fnRes = opFn.apply(null, [this._runState, this._vm._common])
     }
     // If is a CALL, append the call opcodes to the interpreter object
-    if (['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE'].includes(opInfo.name) && fnRes) {
+    if (
+      ['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE', 'CREATE', 'CREATE2'].includes(
+        opInfo.name
+      ) &&
+      fnRes
+    ) {
       simpleInterpreterStep.callOpcodes = fnRes.evmSteps
     }
 
