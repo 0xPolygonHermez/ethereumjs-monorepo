@@ -350,7 +350,12 @@ export class Interpreter {
       fnRes = opFn.apply(null, [this._runState, this._vm._common])
     }
     // If is a CALL, append the call opcodes to the interpreter object
-    if (['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE'].includes(opInfo.name) && fnRes) {
+    if (
+      ['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE', 'CREATE', 'CREATE2'].includes(
+        opInfo.name
+      ) &&
+      fnRes
+    ) {
       simpleInterpreterStep.callOpcodes = fnRes.evmSteps
     }
 
@@ -1015,7 +1020,7 @@ export class Interpreter {
     value: bigint,
     data: Uint8Array,
     salt?: Uint8Array
-  ): Promise<bigint> {
+  ): Promise<BaseCallResult> {
     const selfdestruct = { ...this._result.selfdestruct }
     const caller = this._env.address
     const depth = this._env.depth + 1
@@ -1028,12 +1033,16 @@ export class Interpreter {
       this._env.depth >= Number(this._common.param('vm', 'stackLimit')) ||
       this._env.contract.balance < value
     ) {
-      return BigInt(0)
+      return {
+        returnCode: BigInt(0),
+      }
     }
 
     // EIP-2681 check
     if (this._env.contract.nonce >= MAX_UINT64) {
-      return BigInt(0)
+      return {
+        returnCode: BigInt(0),
+      }
     }
 
     this._env.contract.nonce += BigInt(1)
@@ -1044,7 +1053,9 @@ export class Interpreter {
         data.length > Number(this._common.param('vm', 'maxInitCodeSize')) &&
         this._evm._allowUnlimitedInitCodeSize === false
       ) {
-        return BigInt(0)
+        return {
+          returnCode: BigInt(0),
+        }
       }
     }
 
@@ -1090,11 +1101,17 @@ export class Interpreter {
       this._runState.gasRefund = results.execResult.gasRefund ?? BigInt(0)
       if (results.createdAddress) {
         // push the created address to the stack
-        return bytesToBigInt(results.createdAddress.bytes)
+        return {
+          returnCode: BigInt(results.createdAddress.buf),
+          results,
+        }
       }
     }
 
-    return this._getReturnCode(results)
+    return {
+      returnCode: this._getReturnCode(results),
+      results,
+    }
   }
 
   /**
@@ -1106,7 +1123,7 @@ export class Interpreter {
     value: bigint,
     data: Uint8Array,
     salt: Uint8Array
-  ): Promise<bigint> {
+  ): Promise<BaseCallResult> {
     return this.create(gasLimit, value, data, salt)
   }
 
