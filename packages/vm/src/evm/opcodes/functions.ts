@@ -19,7 +19,7 @@ import {
 } from './util'
 import { ERROR } from '../../exceptions'
 import { RunState } from './../interpreter'
-
+const { smtUtils } = require('@polygon-hermez/zkevm-commonjs')
 export interface SyncOpHandler {
   (runState: RunState, common: Common): void
 }
@@ -524,12 +524,14 @@ export const handlers: Map<number, OpHandler> = new Map([
       }
 
       const code = await runState.eei.getExternalCode(addressBN)
+      // Use linear poseidon hash
+      const lpCode = smtUtils.hashContractBytecode(code.toString('hex'))
       if (code.length === 0) {
         runState.stack.push(new BN(KECCAK256_NULL))
         return
       }
 
-      runState.stack.push(new BN(keccak256(code)))
+      runState.stack.push(new BN(lpCode.slice(2), 16))
     },
   ],
   // 0x3d: RETURNDATASIZE
