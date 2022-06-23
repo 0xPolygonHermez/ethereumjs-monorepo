@@ -523,7 +523,7 @@ export const handlers: Map<number, OpHandler> = new Map([
         return
       }
       // Use linear poseidon hash
-      const lpCode = smtUtils.hashContractBytecode(account.code.toString('hex'))
+      const lpCode = await smtUtils.hashContractBytecode(account.code.toString('hex'))
       runState.stack.push(BigInt(lpCode.slice(2))
     },
   ],
