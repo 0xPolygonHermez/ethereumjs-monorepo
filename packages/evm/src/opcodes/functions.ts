@@ -34,7 +34,7 @@ import type { RunState } from '../interpreter'
 import type { Common } from '@ethereumjs/common'
 
 const EIP3074MAGIC = hexToBytes('03')
-
+const { smtUtils } = require('@polygon-hermez/zkevm-commonjs')
 export interface SyncOpHandler {
   (runState: RunState, common: Common): void
 }
@@ -522,8 +522,9 @@ export const handlers: Map<number, OpHandler> = new Map([
         runState.stack.push(BigInt(0))
         return
       }
-
-      runState.stack.push(BigInt('0x' + bytesToHex(account.codeHash)))
+      // Use linear poseidon hash
+      const lpCode = smtUtils.hashContractBytecode(account.code.toString('hex'))
+      runState.stack.push(BigInt(lpCode.slice(2))
     },
   ],
   // 0x3d: RETURNDATASIZE
