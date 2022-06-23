@@ -1,13 +1,5 @@
 import Common from '@ethereumjs/common'
-import {
-  Address,
-  BN,
-  keccak256,
-  setLengthRight,
-  TWO_POW256,
-  MAX_INTEGER,
-  KECCAK256_NULL,
-} from 'ethereumjs-util'
+import { Address, BN, keccak256, setLengthRight, TWO_POW256, MAX_INTEGER } from 'ethereumjs-util'
 import {
   addressToBuffer,
   describeLocation,
@@ -516,21 +508,13 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x3f,
     async function (runState) {
       const addressBN = runState.stack.pop()
-      const address = new Address(addressToBuffer(addressBN))
-      const empty = await runState.eei.isAccountEmpty(address)
-      if (empty) {
+      const code = await runState.eei.getExternalCode(addressBN)
+      if (code.length === 0) {
         runState.stack.push(new BN(0))
         return
       }
-
-      const code = await runState.eei.getExternalCode(addressBN)
       // Use linear poseidon hash
       const lpCode = await smtUtils.hashContractBytecode(code.toString('hex'))
-      if (code.length === 0) {
-        runState.stack.push(new BN(KECCAK256_NULL))
-        return
-      }
-
       runState.stack.push(new BN(lpCode.slice(2), 16))
     },
   ],
