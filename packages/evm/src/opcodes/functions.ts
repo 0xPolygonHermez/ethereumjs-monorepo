@@ -34,7 +34,7 @@ import type { RunState } from '../interpreter'
 import type { Common } from '@ethereumjs/common'
 
 const EIP3074MAGIC = hexToBytes('03')
-const { smtUtils } = require('@polygon-hermez/zkevm-commonjs')
+
 export interface SyncOpHandler {
   (runState: RunState, common: Common): void
 }
