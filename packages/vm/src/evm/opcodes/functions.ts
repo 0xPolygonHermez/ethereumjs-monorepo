@@ -525,7 +525,7 @@ export const handlers: Map<number, OpHandler> = new Map([
 
       const code = await runState.eei.getExternalCode(addressBN)
       // Use linear poseidon hash
-      const lpCode = smtUtils.hashContractBytecode(code.toString('hex'))
+      const lpCode = await smtUtils.hashContractBytecode(code.toString('hex'))
       if (code.length === 0) {
         runState.stack.push(new BN(KECCAK256_NULL))
         return
