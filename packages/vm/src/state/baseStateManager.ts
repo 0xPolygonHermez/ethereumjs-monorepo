@@ -199,7 +199,6 @@ export abstract class BaseStateManager {
   async checkpoint(): Promise<void> {
     this._cache.checkpoint()
     this._touchedStack.push(new Set(Array.from(this._touched)))
-    this._customTouched = new Set()
     this._accessedStorage.push(new Map())
     this._checkpointCount++
   }
