@@ -253,17 +253,20 @@ export class Interpreter {
       try {
         const interpreterStep = await this.runStep()
         //Store a copy of the object
-        evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
+        // evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
+        evmSteps.push(Object.assign({}, interpreterStep))
         //If has extra steps from a call, add them to the array
         if (interpreterStep.callOpcodes) {
           interpreterStep.callOpcodes.forEach(function (step) {
-            evmSteps.push(JSON.parse(JSON.stringify(step)))
+            // evmSteps.push(JSON.parse(JSON.stringify(step)))
+            evmSteps.push(Object.assign({}, step))
           })
         }
       } catch (e: any) {
         //Add evmStepAux to steps array
         if (this._evmStepAux) {
-          evmSteps.push(JSON.parse(JSON.stringify(this._evmStepAux)))
+          // evmSteps.push(JSON.parse(JSON.stringify(this._evmStepAux)))
+          evmSteps.push(Object.assign({}, this._evmStepAux))
           this._evmStepAux = null
         }
         // re-throw on non-VM errors
