@@ -7,6 +7,7 @@ import Stack from './stack'
 import EEI from './eei'
 import { Opcode, handlers as opHandlers, OpHandler, AsyncOpHandler } from './opcodes'
 import { dynamicGasHandlers } from './opcodes/gas'
+import cloneDeep from 'lodash/cloneDeep'
 
 export interface InterpreterOpts {
   pc?: number
@@ -137,19 +138,19 @@ export default class Interpreter {
         const interpreterStep = await this.runStep()
         //Store a copy of the object
         // evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
-        evmSteps.push(Object.assign({}, interpreterStep))
+        evmSteps.push(cloneDeep(interpreterStep))
         //If has extra steps from a call, add them to the array
         if (interpreterStep.callOpcodes) {
           interpreterStep.callOpcodes.forEach(function (step) {
             // evmSteps.push(JSON.parse(JSON.stringify(step)))
-            evmSteps.push(Object.assign({}, step))
+            evmSteps.push(cloneDeep(step))
           })
         }
       } catch (e: any) {
         //Add evmStepAux to steps array
         if (this._evmStepAux) {
           // evmSteps.push(JSON.parse(JSON.stringify(this._evmStepAux)))
-          evmSteps.push(Object.assign({}, this._evmStepAux))
+          evmSteps.push(cloneDeep(this._evmStepAux))
           this._evmStepAux = null
         }
         // re-throw on non-VM errors
