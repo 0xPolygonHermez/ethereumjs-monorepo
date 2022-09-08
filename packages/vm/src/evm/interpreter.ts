@@ -112,7 +112,7 @@ export default class Interpreter {
   async run(code: Buffer, opts: InterpreterOpts = {}): Promise<InterpreterResult> {
     this._runState.code = code
     this._runState.programCounter = opts.pc ?? this._runState.programCounter
-    const evmSteps = []
+    let evmSteps: any[] = []
 
     // Check that the programCounter is in range
     const pc = this._runState.programCounter
@@ -137,14 +137,12 @@ export default class Interpreter {
       try {
         const interpreterStep = await this.runStep()
         //Store a copy of the object
-        // evmSteps.push(JSON.parse(JSON.stringify(interpreterStep)))
+        const callOpcodes = interpreterStep.callOpcodes
+        delete interpreterStep.callOpcodes
         evmSteps.push(cloneDeep(interpreterStep))
         //If has extra steps from a call, add them to the array
-        if (interpreterStep.callOpcodes) {
-          interpreterStep.callOpcodes.forEach(function (step) {
-            // evmSteps.push(JSON.parse(JSON.stringify(step)))
-            evmSteps.push(cloneDeep(step))
-          })
+        if (callOpcodes) {
+          evmSteps = evmSteps.concat(callOpcodes)
         }
       } catch (e: any) {
         //Add evmStepAux to steps array
