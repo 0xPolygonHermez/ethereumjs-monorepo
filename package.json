@@ -18,6 +18,7 @@
     "sort-package-json": "sort-package-json \"package.json\" \"packages/*/package.json\""
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "@types/node": "16.11.49",
     "@types/tape": "4.13.2",
     "@typescript-eslint/eslint-plugin": "5.33.1",
@@ -27,6 +28,7 @@
     "eslint-config-prettier": "8.5.0",
     "eslint-config-typestrict": "1.0.5",
     "eslint-formatter-codeframe": "7.32.1",
+    "eslint-plugin-ethereumjs": "file:./eslint",
     "eslint-plugin-github": "4.3.7",
     "eslint-plugin-implicit-dependencies": "1.1.1",
     "eslint-plugin-import": "2.26.0",
@@ -46,8 +48,7 @@
     "ts-node": "10.9.1",
     "typedoc": "0.23.10",
     "typedoc-plugin-markdown": "3.13.4",
-    "typescript": "4.7.4",
-    "eslint-plugin-ethereumjs": "file:./eslint"
+    "typescript": "4.7.4"
   },
   "engines": {
     "node": ">=14",
