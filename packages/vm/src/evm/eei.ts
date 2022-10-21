@@ -437,7 +437,21 @@ export default class EEI {
    */
   async selfDestruct(toAddress: Address): Promise<void> {
     // return this._selfDestruct(toAddress)
-    return this._customSelfDestruct(toAddress)
+    return this._sendall(toAddress)
+  }
+
+  async _sendall(toAddress: Address): Promise<void> {
+    // Add to beneficiary balance
+    const toAccount = await this._state.getAccount(toAddress)
+    toAccount.balance.iadd(this._env.contract.balance)
+    await this._state.putAccount(toAddress, toAccount)
+
+    // Subtract from contract balance
+    const account = await this._state.getAccount(this._env.address)
+    account.balance = new BN(0)
+    await this._state.putAccount(this._env.address, account)
+
+    trap(ERROR.STOP)
   }
 
   async _customSelfDestruct(toAddress: Address): Promise<void> {
