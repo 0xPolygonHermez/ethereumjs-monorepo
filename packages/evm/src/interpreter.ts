@@ -19,6 +19,7 @@ import cloneDeep from 'lodash/cloneDeep'
 const ethers = require('ethers')
 
 const ADDRESS_SYSTEM = '0x0000000000000000000000000000000000000000'
+const LAST_TX_STORAGE_POS = '0x0000000000000000000000000000000000000000000000000000000000000000'
 const STATE_ROOT_STORAGE_POS = 0
 
 const debugGas = createDebugLogger('evm:eei:gas')
@@ -759,7 +760,7 @@ export class Interpreter {
   }
 
   /**
-   * Returns Gets the hash of one of the 256 most recent complete blocks.
+   * Returns state root of the requested tx/block
    * @param num - Number of block
    */
   async getBatchHash(num: bigint): Promise<bigint> {
@@ -775,6 +776,18 @@ export class Interpreter {
       return BigInt(0)
     }
     return bytesToBigInt(hash)
+  }
+
+  /**
+   * Returns the current tx/block number
+   * @param num - Number of block
+   */
+  async getBlockNum(): Promise<BigInt> {
+    const blockNum = await this._stateManager.getContractStorage(
+      new Address(toBuffer(ADDRESS_SYSTEM)),
+      toBuffer(LAST_TX_STORAGE_POS)
+    )
+    return BigInt(blockNum)+(BigInt(1))
   }
 
   /**
