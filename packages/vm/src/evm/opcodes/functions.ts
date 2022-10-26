@@ -574,8 +574,9 @@ export const handlers: Map<number, OpHandler> = new Map([
   // 0x43: NUMBER
   [
     0x43,
-    function (runState) {
-      runState.stack.push(runState.eei.getBlockNumber())
+    async function (runState) {
+      const num = await runState.eei.getBlockNum()
+      runState.stack.push(num)
     },
   ],
   // 0x44: DIFFICULTY

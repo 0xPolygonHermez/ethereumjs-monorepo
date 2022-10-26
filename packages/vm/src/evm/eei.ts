@@ -11,6 +11,7 @@ import { Log } from './types'
 const ethers = require('ethers')
 
 const ADDRESS_SYSTEM = '0x0000000000000000000000000000000000000000'
+const LAST_TX_STORAGE_POS = '0x0000000000000000000000000000000000000000000000000000000000000000'
 const STATE_ROOT_STORAGE_POS = 0
 
 const debugGas = createDebugLogger('vm:eei:gas')
@@ -363,7 +364,7 @@ export default class EEI {
   }
 
   /**
-   * Returns Gets the hash of one of the 256 most recent complete blocks.
+   * Returns state root of the requested tx/block
    * @param num - Number of block
    */
   async getBatchHash(num: BN): Promise<BN> {
@@ -379,6 +380,18 @@ export default class EEI {
       return new BN(0)
     }
     return new BN(hash)
+  }
+
+  /**
+   * Returns the current tx/block number
+   * @param num - Number of block
+   */
+  async getBlockNum(): Promise<BN> {
+    const blockNum = await this._state.getContractStorage(
+      new Address(toBuffer(ADDRESS_SYSTEM)),
+      toBuffer(LAST_TX_STORAGE_POS)
+    )
+    return new BN(blockNum).add(new BN(1))
   }
 
   /**
