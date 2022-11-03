@@ -1,6 +1,6 @@
 {
   "name": "@polygon-hermez/vm",
-  "version": "5.7.24",
+  "version": "5.7.25",
   "description": "An Ethereum VM implementation",
   "license": "MPL-2.0",
   "author": "mjbecze <mjbecze@gmail.com>",
