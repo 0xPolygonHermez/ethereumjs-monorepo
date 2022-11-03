@@ -567,7 +567,8 @@ export default class Common extends EventEmitter {
         throw new Error(`${eip} not supported`)
       }
       const minHF = this.gteHardfork(EIPs[eip]['minimumHardfork'])
-      if (!minHF) {
+      // We support to activate EIP 3198 before London HF for basefee testing purposes
+      if (!minHF && eip !== 3198) {
         throw new Error(
           `${eip} cannot be activated on hardfork ${this.hardfork()}, minimumHardfork: ${minHF}`
         )
