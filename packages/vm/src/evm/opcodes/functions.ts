@@ -611,7 +611,8 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x48,
     function (runState) {
-      runState.stack.push(runState.eei.getBlockBaseFee())
+      //runState.stack.push(runState.eei.getBlockBaseFee())
+      runState.stack.push(new BN(0))
     },
   ],
   // 0x50 range - 'storage' and execution
