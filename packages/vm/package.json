@@ -1,6 +1,6 @@
 {
   "name": "@polygon-hermez/vm",
-  "version": "5.7.27",
+  "version": "5.7.28",
   "description": "An Ethereum VM implementation",
   "keywords": [
     "ethereum",
@@ -60,7 +60,7 @@
     "@ethereumjs/blockchain": "^5.5.1",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
-    "@polygon-hermez/zkevm-commonjs": "github:hermeznetwork/zkevm-commonjs#v0.0.26",
+    "@polygon-hermez/zkevm-commonjs": "github:hermeznetwork/zkevm-commonjs#v0.5.0.1",
     "async-eventemitter": "^0.2.4",
     "core-js-pure": "^3.0.1",
     "debug": "^4.3.3",
