@@ -1154,6 +1154,11 @@ export class Interpreter {
   }
 
   async _sendall(toAddress: Address): Promise<void> {
+    // not move balances if receiver address is the same as beneficiary
+    if (toAddress.equals(this._env.address)) {
+      trap(ERROR.STOP)
+    }
+
     // Add to beneficiary balance
     let toAccount = await this._stateManager.getAccount(toAddress)
     if (!toAccount) {
