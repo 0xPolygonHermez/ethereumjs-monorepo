@@ -629,8 +629,8 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x48,
     function (runState) {
-      // runState.stack.push(runState.interpreter.getBlockBaseFee())
-      runState.stack.push(BigInt(0))
+      runState.stack.push(runState.interpreter.getBlockBaseFee())
+      // runState.stack.push(BigInt(0))
     },
   ],
   // 0x49: DATAHASH
