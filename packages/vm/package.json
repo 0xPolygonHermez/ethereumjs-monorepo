@@ -60,7 +60,7 @@
     "@ethereumjs/blockchain": "^5.5.1",
     "@ethereumjs/common": "^2.6.2",
     "@ethereumjs/tx": "^3.5.0",
-    "@polygon-hermez/zkevm-commonjs": "github:hermeznetwork/zkevm-commonjs#v0.5.0.1",
+    "@polygon-hermez/zkevm-commonjs": "github:hermeznetwork/zkevm-commonjs#v1.0.0",
     "async-eventemitter": "^0.2.4",
     "core-js-pure": "^3.0.1",
     "debug": "^4.3.3",
