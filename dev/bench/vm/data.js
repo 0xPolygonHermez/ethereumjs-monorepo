@@ -1,67 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1684163178596,
+  "lastUpdate": 1684163201979,
   "repoUrl": "https://github.com/hermeznetwork/ethereumjs-monorepo",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "ryan@ryanio.com",
-            "name": "Ryan Ghods",
-            "username": "ryanio"
-          },
-          "committer": {
-            "email": "noreply@github.com",
-            "name": "GitHub",
-            "username": "web-flow"
-          },
-          "distinct": true,
-          "id": "7f0a06a68433e902a16a8aa8bc6fcdfc861be135",
-          "message": "Merge pull request #1626 from ethereumjs/monorepo-add-rlp\n\nrlp: add to monorepo",
-          "timestamp": "2022-01-10T17:08:04-08:00",
-          "tree_id": "a32a8acc39b115fda08ec5d698864c342c3d8066",
-          "url": "https://github.com/ethereumjs/ethereumjs-monorepo/commit/7f0a06a68433e902a16a8aa8bc6fcdfc861be135"
-        },
-        "date": 1641863584928,
-        "tool": "benchmarkjs",
-        "benches": [
-          {
-            "name": "Block 9422905",
-            "value": 12938,
-            "range": "±5.01%",
-            "unit": "ops/sec",
-            "extra": "73 samples"
-          },
-          {
-            "name": "Block 9422906",
-            "value": 13628,
-            "range": "±2.21%",
-            "unit": "ops/sec",
-            "extra": "80 samples"
-          },
-          {
-            "name": "Block 9422907",
-            "value": 12402,
-            "range": "±7.31%",
-            "unit": "ops/sec",
-            "extra": "74 samples"
-          },
-          {
-            "name": "Block 9422908",
-            "value": 10265,
-            "range": "±14.17%",
-            "unit": "ops/sec",
-            "extra": "74 samples"
-          },
-          {
-            "name": "Block 9422910",
-            "value": 13837,
-            "range": "±2.38%",
-            "unit": "ops/sec",
-            "extra": "80 samples"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -1770,6 +1711,65 @@ window.BENCHMARK_DATA = {
             "range": "±2.35%",
             "unit": "ops/sec",
             "extra": "87 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Holger.Drewes@gmail.com",
+            "name": "Holger Drewes",
+            "username": "holgerd77"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cf2b55d33cb8d0d4e63fb6805259c00514942bd2",
+          "message": "Merge pull request #2701 from ethereumjs/develop-v7-merge-master\n\nMerge develop-v7 into master (v2?) (V7 releases)",
+          "timestamp": "2023-05-15T14:32:56+02:00",
+          "tree_id": "00dff3ff4a7f73bd50ac723fb784f90cdcc64a21",
+          "url": "https://github.com/hermeznetwork/ethereumjs-monorepo/commit/cf2b55d33cb8d0d4e63fb6805259c00514942bd2"
+        },
+        "date": 1684163201047,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "Block 9422905",
+            "value": 20585,
+            "range": "±5.01%",
+            "unit": "ops/sec",
+            "extra": "77 samples"
+          },
+          {
+            "name": "Block 9422906",
+            "value": 20791,
+            "range": "±2.96%",
+            "unit": "ops/sec",
+            "extra": "80 samples"
+          },
+          {
+            "name": "Block 9422907",
+            "value": 18722,
+            "range": "±7.78%",
+            "unit": "ops/sec",
+            "extra": "72 samples"
+          },
+          {
+            "name": "Block 9422908",
+            "value": 20236,
+            "range": "±2.93%",
+            "unit": "ops/sec",
+            "extra": "78 samples"
+          },
+          {
+            "name": "Block 9422910",
+            "value": 20248,
+            "range": "±3.22%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
           }
         ]
       }
