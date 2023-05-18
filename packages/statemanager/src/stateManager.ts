@@ -38,6 +38,8 @@ import type { PrefixedHexString } from '@ethereumjs/util'
 import type { Debugger } from 'debug'
 import type { AccessList } from 'ethers/lib/utils'
 
+type AddressHex = string
+
 export type StorageProof = {
   key: PrefixedHexString
   proof: PrefixedHexString[]
@@ -366,7 +368,7 @@ export class DefaultStateManager implements EVMStateManagerInterface {
    */
   protected touchAccount(address: Address): void {
     this.touchedJournal.addJournalItem(address.toString().slice(2))
-    this._customTouched.add(address.buf.toString('hex'))
+    this._customTouched.add(address.toString())
   }
 
   /**
