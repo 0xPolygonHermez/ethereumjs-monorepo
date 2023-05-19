@@ -105,16 +105,16 @@ export interface SimpleInterpreterStep {
   opcode: {
     name: string
     fee: number
-    dynamicFee?: BN
+    dynamicFee?: bigint
     isAsync: boolean
   }
-  gasLeft: BN
-  gasRefund: BN
-  stack: BN[]
-  returnStack: BN[]
+  gasLeft: bigint
+  gasRefund: bigint
+  stack: bigint[]
+  returnStack: bigint[]
   depth: number
-  memory: Buffer
-  memoryWordCount: BN
+  memory: Uint8Array
+  memoryWordCount: bigint
   codeAddress: Address
 }
 
