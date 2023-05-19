@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@types/assert": "^1.5.4",
-    "@types/node": "^16.11.7",
+    "@types/node": "20.2.1",
     "@types/secp256k1": "^4.0.1",
     "@types/tape": "^4.13.2",
     "eslint": "^6.8.0",

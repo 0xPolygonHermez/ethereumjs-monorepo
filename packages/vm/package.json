@@ -1,6 +1,6 @@
 {
   "name": "@polygon-hermez/vm",
-  "version": "5.7.31",
+  "version": "5.7.36",
   "description": "An Ethereum VM implementation",
   "license": "MPL-2.0",
   "author": "mjbecze <mjbecze@gmail.com>",
@@ -67,9 +67,10 @@
     "@ethersproject/abi": "^5.0.12",
     "@types/benchmark": "^1.0.33",
     "@types/core-js": "^2.5.0",
+    "@types/lodash": "^4.14.194",
     "@types/lru-cache": "^5.1.0",
     "@types/minimist": "^1.2.2",
-    "@types/node": "^16.11.7",
+    "@types/node": "20.2.1",
     "@types/node-dir": "^0.0.34",
     "@types/tape": "^4.13.2",
     "benchmark": "^2.1.4",
@@ -89,7 +90,7 @@
     "standard": "^10.0.0",
     "tape": "^5.3.1",
     "ts-node": "^10.2.1",
-    "typedoc": "^0.22.4",
+    "typedoc": "0.24.7",
     "typescript": "^4.4.2"
   },
   "contributors": [

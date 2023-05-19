@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { debug as createDebugLogger } from 'debug'
 import { Address, BN, KECCAK256_NULL, toBuffer } from 'ethereumjs-util'
 import { Block } from '@ethereumjs/block'
@@ -73,6 +74,11 @@ export interface RunTxOpts {
    * To obtain an accurate tx receipt input the block gas used up until this tx.
    */
   blockGasUsed?: BN
+
+  /**
+   * GasPrice proposed by the sequencer expresed in percentage of the tx gas price.
+   */
+  effectivePercentage?: Number
 }
 
 /**
@@ -233,7 +239,8 @@ async function _runTx(this: VM, opts: RunTxOpts): Promise<RunTxResult> {
   // Have to cast as `EIP2929StateManager` to access the EIP2929 methods
   const state = this.stateManager as EIP2929StateManager
 
-  const { tx, block } = opts
+  let tx = opts.tx
+  const { block } = opts
 
   if (!block) {
     throw new Error('block required')
@@ -359,7 +366,22 @@ async function _runTx(this: VM, opts: RunTxOpts): Promise<RunTxResult> {
     gasPrice = inclusionFeePerGas.add(baseFee)
   } else {
     // Have to cast as legacy tx since EIP1559 tx does not have gas price
-    gasPrice = (<Transaction>tx).gasPrice
+    // Compute effective gas price and update tx
+    if (typeof opts.effectivePercentage === 'undefined') {
+      opts.effectivePercentage = 255
+    }
+
+    const effectivegasPrice = (<Transaction>tx).gasPrice
+      .mul(new BN(Number(opts.effectivePercentage) + 1))
+      .div(new BN(256))
+
+    gasPrice = effectivegasPrice
+    // Create new Transaction object with updated gas price
+    tx = new Transaction({
+      ...tx,
+      gasPrice,
+    })
+
     if (this._common.isActivatedEIP(1559)) {
       const baseFee = block.header.baseFeePerGas!
       inclusionFeePerGas = (<Transaction>tx).gasPrice.sub(baseFee)
