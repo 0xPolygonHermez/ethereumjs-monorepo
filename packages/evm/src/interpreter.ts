@@ -1102,7 +1102,7 @@ export class Interpreter {
       if (results.createdAddress) {
         // push the created address to the stack
         return {
-          returnCode: BigInt(results.createdAddress.buf),
+          returnCode: BigInt(results.createdAddress.toString()),
           results,
         }
       }
