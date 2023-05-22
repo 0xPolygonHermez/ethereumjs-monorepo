@@ -1,6 +1,6 @@
 {
-  "name": "@ethereumjs/evm",
-  "version": "1.3.2",
+  "name": "@polygon-hermez/evm",
+  "version": "1.3.3",
   "description": "JavaScript Ethereum Virtual Machine (EVM) implementation",
   "keywords": [
     "ethereum",

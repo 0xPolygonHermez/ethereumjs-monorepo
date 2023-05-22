@@ -1,6 +1,6 @@
 {
-  "name": "@ethereumjs/blockchain",
-  "version": "6.2.2",
+  "name": "@polygon-hermez/blockchain",
+  "version": "6.2.3",
   "description": "A module to store and interact with blocks",
   "keywords": [
     "ethereum",

@@ -1,6 +1,6 @@
 {
-  "name": "@ethereumjs/rlp",
-  "version": "4.0.1",
+  "name": "@polygon-hermez/rlp",
+  "version": "4.0.2",
   "description": "Recursive Length Prefix Encoding Module",
   "keywords": [
     "rlp",
