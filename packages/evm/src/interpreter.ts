@@ -357,7 +357,7 @@ export class Interpreter {
       ['CALL', 'STATICCALL', 'DELEGATECALL', 'CALLCODE', 'CREATE', 'CREATE2'].includes(
         opInfo.name
       ) &&
-      fnRes
+      fnRes !== undefined
     ) {
       simpleInterpreterStep.callOpcodes = fnRes.evmSteps
     }
@@ -468,7 +468,7 @@ export class Interpreter {
      * @property {BigInt} memoryWordCount current size of memory in words
      * @property {Address} codeAddress the address of the code which is currently being ran (this differs from `address` in a `DELEGATECALL` and `CALLCODE` call)
      */
-    if (this._vm.listenerCount('step') > 0 || this._vm.DEBUG) {
+    if (this._vm.listenerCount('step') > 0 || this._vm.DEBUG !== undefined) {
       // Only run this stepHook function if there is an event listener (e.g. test runner)
       // or if the vm is running in debug mode (to display opcode debug logs)
       this._vm._emit('step', eventObj)
@@ -778,7 +778,7 @@ export class Interpreter {
       new Address(hexStringToBytes(ADDRESS_SYSTEM)),
       hexStringToBytes(stateRootPos)
     )
-    if (!hash || hash.length === 0) {
+    if (hash === undefined || hash.length === 0) {
       return BigInt(0)
     }
     return bytesToBigInt(hash)
