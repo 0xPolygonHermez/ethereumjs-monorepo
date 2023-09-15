@@ -44,6 +44,8 @@ export interface Env {
   contract: Account
   // Different than address for DELEGATECALL and CALLCODE
   codeAddress: Address
+  isCreate: boolean
+  isDeploy: boolean
 }
 
 /**
@@ -534,7 +536,13 @@ export default class EEI {
   /**
    * Sends a message with arbitrary data to a given address path.
    */
-  async call(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BaseCallResult> {
+  async call(
+    gasLimit: BN,
+    address: Address,
+    value: BN,
+    data: Buffer,
+    outLength: BN
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -543,6 +551,7 @@ export default class EEI {
       data,
       isStatic: this._env.isStatic,
       depth: this._env.depth + 1,
+      outLength,
     })
 
     return this._baseCall(msg)
@@ -551,7 +560,13 @@ export default class EEI {
   /**
    * Message-call into this account with an alternative account's code.
    */
-  async callCode(gasLimit: BN, address: Address, value: BN, data: Buffer): Promise<BaseCallResult> {
+  async callCode(
+    gasLimit: BN,
+    address: Address,
+    value: BN,
+    data: Buffer,
+    outLength: BN
+  ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
       gasLimit,
@@ -561,6 +576,7 @@ export default class EEI {
       data,
       isStatic: this._env.isStatic,
       depth: this._env.depth + 1,
+      outLength,
     })
 
     return this._baseCall(msg)
@@ -575,7 +591,8 @@ export default class EEI {
     gasLimit: BN,
     address: Address,
     value: BN,
-    data: Buffer
+    data: Buffer,
+    outLength: BN
   ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.address,
@@ -585,6 +602,7 @@ export default class EEI {
       data,
       isStatic: true,
       depth: this._env.depth + 1,
+      outLength,
     })
 
     return this._baseCall(msg)
@@ -598,7 +616,8 @@ export default class EEI {
     gasLimit: BN,
     address: Address,
     value: BN,
-    data: Buffer
+    data: Buffer,
+    outLength: BN
   ): Promise<BaseCallResult> {
     const msg = new Message({
       caller: this._env.caller,
@@ -610,6 +629,7 @@ export default class EEI {
       isStatic: this._env.isStatic,
       delegatecall: true,
       depth: this._env.depth + 1,
+      outLength,
     })
 
     return this._baseCall(msg)
@@ -681,6 +701,7 @@ export default class EEI {
       salt,
       depth: this._env.depth + 1,
       selfdestruct,
+      isCreate: true,
     })
 
     // empty the return data buffer

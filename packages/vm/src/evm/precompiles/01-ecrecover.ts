@@ -6,6 +6,8 @@ const assert = require('assert')
 export default function (opts: PrecompileInput): ExecResult {
   assert(opts.data)
 
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preECRecover')
   const gasUsed = new BN(opts._common.param('gasPrices', 'ecRecover'))
 
   if (opts.gasLimit.lt(gasUsed)) {

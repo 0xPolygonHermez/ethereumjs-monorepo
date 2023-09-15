@@ -27,6 +27,7 @@ export interface RunState {
   stateManager: StateManager
   eei: EEI
   messageGasLimit?: BN // Cache value from `gas.ts` to save gas limit for a message call
+  vcm?: any
 }
 
 export interface InterpreterResult {
@@ -73,6 +74,7 @@ export interface SimpleInterpreterStep {
   memoryWordCount: BN
   codeAddress: Address
   callOpcodes?: SimpleInterpreterStep[]
+  counters?: any
 }
 
 /**
@@ -105,6 +107,7 @@ export default class Interpreter {
       stateManager: this._state,
       eei: this._eei,
       shouldDoJumpAnalysis: true,
+      vcm: vm.vcm,
     }
     this._evmStepAux = null
   }
@@ -229,7 +232,8 @@ export default class Interpreter {
     ) {
       simpleInterpreterStep.callOpcodes = fnRes.evmSteps
     }
-
+    // Set counters consumption at interpreter step
+    simpleInterpreterStep.counters = this._runState.vcm.currentCountersSnapshot
     return simpleInterpreterStep
   }
 
