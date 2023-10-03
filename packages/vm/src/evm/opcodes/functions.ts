@@ -1341,6 +1341,7 @@ export const handlers: Map<number, OpHandler> = new Map([
         returnLength: length.toNumber(),
         isCreate: runState.eei._env.isCreate,
         isDeploy: runState.eei._env.isDeploy,
+        depth: runState.eei._env.depth,
       })
       let returnData = Buffer.alloc(0)
       if (!length.isZero()) {

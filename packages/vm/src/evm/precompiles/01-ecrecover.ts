@@ -19,7 +19,11 @@ export default function (opts: PrecompileInput): ExecResult {
   const r = data.slice(64, 96)
   const s = data.slice(96, 128)
   // Reduce counters
-  opts._VM.vcm.computeFunctionCounters('preECRecover', { v: new BN(v), r: new BN(r), s: new BN(s) })
+  opts._VM.vcm.computeFunctionCounters('preECRecover', {
+    v: new BN(v).toString(),
+    r: new BN(r).toString(),
+    s: new BN(s).toString(),
+  })
   let publicKey
   try {
     publicKey = ecrecover(msgHash, new BN(v), r, s)

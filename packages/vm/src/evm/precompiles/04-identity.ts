@@ -7,11 +7,6 @@ export default function (opts: PrecompileInput): ExecResult {
   assert(opts.data)
 
   const data = opts.data
-  // Reduce counters
-  opts._VM.vcm.computeFunctionCounters('preIdentity', {
-    calldataLength: data.length,
-    returnDataLength: opts.outLength.toNumber(),
-  })
   const gasUsed = new BN(opts._common.param('gasPrices', 'identity'))
   gasUsed.iadd(
     new BN(opts._common.param('gasPrices', 'identityWord')).imuln(Math.ceil(data.length / 32))
@@ -21,6 +16,11 @@ export default function (opts: PrecompileInput): ExecResult {
     return OOGResult(opts.gasLimit)
   }
 
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preIdentity', {
+    calldataLength: data.length,
+    returnDataLength: opts.outLength.toNumber(),
+  })
   return {
     gasUsed,
     returnValue: data,
