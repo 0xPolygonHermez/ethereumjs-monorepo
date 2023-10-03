@@ -6,8 +6,6 @@ const assert = require('assert')
 export default function (opts: PrecompileInput): ExecResult {
   assert(opts.data)
 
-  // Reduce counters
-  opts._VM.vcm.computeFunctionCounters('preECRecover')
   const gasUsed = new BN(opts._common.param('gasPrices', 'ecRecover'))
 
   if (opts.gasLimit.lt(gasUsed)) {
@@ -20,7 +18,8 @@ export default function (opts: PrecompileInput): ExecResult {
   const v = data.slice(32, 64)
   const r = data.slice(64, 96)
   const s = data.slice(96, 128)
-
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preECRecover', { v: new BN(v), r: new BN(r), s: new BN(s) })
   let publicKey
   try {
     publicKey = ecrecover(msgHash, new BN(v), r, s)
