@@ -9,6 +9,7 @@ export interface PrecompileFunc {
 
 export interface PrecompileInput {
   data: Buffer
+  outLength: BN
   gasLimit: BN
   _common: Common
   _VM: VM

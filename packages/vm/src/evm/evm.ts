@@ -293,6 +293,7 @@ export default class EVM {
       result = await this.runPrecompile(
         message.code as PrecompileFunc,
         message.data,
+        message.outLength,
         message.gasLimit
       )
     } else {
@@ -317,6 +318,7 @@ export default class EVM {
     message.code = message.data
     message.data = Buffer.alloc(0)
     message.to = await this._generateAddress(message)
+    message.isDeploy = true
     if (this._vm.DEBUG) {
       debug(`Generated CREATE contract address ${message.to}`)
     }
@@ -494,6 +496,8 @@ export default class EVM {
       block: this._block || new Block(),
       contract: await this._state.getAccount(message.to || Address.zero()),
       codeAddress: message.codeAddress,
+      isCreate: message.isCreate,
+      isDeploy: message.isDeploy,
     }
     const eei = new EEI(env, this._state, this, this._vm._common, message.gasLimit.clone())
     if (message.selfdestruct) {
@@ -547,6 +551,7 @@ export default class EVM {
   runPrecompile(
     code: PrecompileFunc,
     data: Buffer,
+    outLength: BN,
     gasLimit: BN
   ): Promise<ExecResult> | ExecResult {
     if (typeof code !== 'function') {
@@ -556,6 +561,7 @@ export default class EVM {
     const opts = {
       data,
       gasLimit,
+      outLength,
       _common: this._vm._common,
       _VM: this._vm,
     }

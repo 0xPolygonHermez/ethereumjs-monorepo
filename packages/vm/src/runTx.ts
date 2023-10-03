@@ -79,6 +79,11 @@ export interface RunTxOpts {
    * GasPrice proposed by the sequencer expresed in percentage of the tx gas price.
    */
   effectivePercentage?: Number
+
+  /**
+   * Virtual Counters Manager instance
+   */
+  vcm?: any
 }
 
 /**
@@ -238,7 +243,7 @@ export default async function runTx(this: VM, opts: RunTxOpts): Promise<RunTxRes
 async function _runTx(this: VM, opts: RunTxOpts): Promise<RunTxResult> {
   // Have to cast as `EIP2929StateManager` to access the EIP2929 methods
   const state = this.stateManager as EIP2929StateManager
-
+  this.vcm = opts.vcm
   let tx = opts.tx
   const { block } = opts
 

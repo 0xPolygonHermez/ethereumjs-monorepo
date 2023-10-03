@@ -27,7 +27,11 @@ export const handlers: Map<number, OpHandler> = new Map([
   // 0x00: STOP
   [
     0x00,
-    function () {
+    function (runState) {
+      runState.vcm.computeFunctionCounters('opStop', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       trap(ERROR.STOP)
     },
   ],
@@ -35,6 +39,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x01,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opAdd', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = a.add(b).mod(TWO_POW256)
       runState.stack.push(r)
@@ -44,6 +52,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x02,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMul', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = a.mul(b).mod(TWO_POW256)
       runState.stack.push(r)
@@ -53,6 +65,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x03,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSub', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = a.sub(b).toTwos(256)
       runState.stack.push(r)
@@ -62,6 +78,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x04,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opDiv', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       let r
       if (b.isZero()) {
@@ -76,6 +96,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x05,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSDiv', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       let [a, b] = runState.stack.popN(2)
       let r
       if (b.isZero()) {
@@ -92,6 +116,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x06,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMod', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       let r
       if (b.isZero()) {
@@ -106,6 +134,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x07,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSMod', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       let [a, b] = runState.stack.popN(2)
       let r
       if (b.isZero()) {
@@ -126,6 +158,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x08,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opAddMod', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b, c] = runState.stack.popN(3)
       let r
       if (c.isZero()) {
@@ -140,6 +176,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x09,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMulMod', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b, c] = runState.stack.popN(3)
       let r
       if (c.isZero()) {
@@ -155,6 +195,11 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x0a,
     function (runState, common) {
       const [base, exponent] = runState.stack.popN(2)
+      runState.vcm.computeFunctionCounters('opExp', {
+        bytesExponentLength: exponent.toArrayLike(Buffer).length,
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       if (exponent.isZero()) {
         runState.stack.push(new BN(1))
         return
@@ -181,6 +226,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x0b,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSignExtend', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       /* eslint-disable-next-line prefer-const */
       let [k, val] = runState.stack.popN(2)
       if (k.ltn(31)) {
@@ -203,6 +252,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x10,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opLT', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = new BN(a.lt(b) ? 1 : 0)
       runState.stack.push(r)
@@ -212,6 +265,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x11,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opGT', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = new BN(a.gt(b) ? 1 : 0)
       runState.stack.push(r)
@@ -221,6 +278,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x12,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSLT', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = new BN(a.fromTwos(256).lt(b.fromTwos(256)) ? 1 : 0)
       runState.stack.push(r)
@@ -230,6 +291,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x13,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSGT', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = new BN(a.fromTwos(256).gt(b.fromTwos(256)) ? 1 : 0)
       runState.stack.push(r)
@@ -239,6 +304,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x14,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opEq', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = new BN(a.eq(b) ? 1 : 0)
       runState.stack.push(r)
@@ -248,6 +317,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x15,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opIsZero', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const a = runState.stack.pop()
       const r = new BN(a.isZero() ? 1 : 0)
       runState.stack.push(r)
@@ -257,6 +330,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x16,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opAnd', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = a.and(b)
       runState.stack.push(r)
@@ -266,6 +343,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x17,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opOr', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = a.or(b)
       runState.stack.push(r)
@@ -275,6 +356,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x18,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opXor', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       const r = a.xor(b)
       runState.stack.push(r)
@@ -284,6 +369,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x19,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opNot', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const a = runState.stack.pop()
       const r = a.notn(256)
       runState.stack.push(r)
@@ -293,6 +382,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x1a,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opByte', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [pos, word] = runState.stack.popN(2)
       if (pos.gten(32)) {
         runState.stack.push(new BN(0))
@@ -307,6 +400,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x1b,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSHL', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       if (a.gten(256)) {
         runState.stack.push(new BN(0))
@@ -321,6 +418,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x1c,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSHR', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
       if (a.gten(256)) {
         runState.stack.push(new BN(0))
@@ -335,6 +436,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x1d,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSAR', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [a, b] = runState.stack.popN(2)
 
       let r
@@ -366,6 +471,11 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x20,
     function (runState) {
       const [offset, length] = runState.stack.popN(2)
+      runState.vcm.computeFunctionCounters('opSha3', {
+        inputSize: length.toNumber(),
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       let data = Buffer.alloc(0)
       if (!length.isZero()) {
         data = runState.memory.read(offset.toNumber(), length.toNumber())
@@ -379,6 +489,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x30,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opAddress', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const address = new BN(runState.eei.getAddress().buf)
       runState.stack.push(address)
     },
@@ -387,6 +501,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x31,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opBalance', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const addressBN = runState.stack.pop()
       const address = new Address(addressToBuffer(addressBN))
       const balance = await runState.eei.getExternalBalance(address)
@@ -397,6 +515,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x32,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opOrigin', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getTxOrigin())
     },
   ],
@@ -404,6 +526,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x33,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opCaller', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getCaller())
     },
   ],
@@ -411,6 +537,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x34,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opCallValue', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getCallValue())
     },
   ],
@@ -418,6 +548,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x35,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opCalldataLoad', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const pos = runState.stack.pop()
       if (pos.gt(runState.eei.getCallDataSize())) {
         runState.stack.push(new BN(0))
@@ -436,6 +570,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x36,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opCalldataSize', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const r = runState.eei.getCallDataSize()
       runState.stack.push(r)
     },
@@ -445,9 +583,13 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x37,
     function (runState) {
       const [memOffset, dataOffset, dataLength] = runState.stack.popN(3)
-
       if (!dataLength.eqn(0)) {
         const data = getDataSlice(runState.eei.getCallData(), dataOffset, dataLength)
+        runState.vcm.computeFunctionCounters('opCalldataCopy', {
+          inputSize: data.length,
+          isCreate: runState.eei._env.isCreate,
+          isDeploy: runState.eei._env.isDeploy,
+        })
         const memOffsetNum = memOffset.toNumber()
         const dataLengthNum = dataLength.toNumber()
         runState.memory.extend(memOffsetNum, dataLengthNum)
@@ -459,6 +601,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x38,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opCodeSize', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getCodeSize())
     },
   ],
@@ -470,6 +616,11 @@ export const handlers: Map<number, OpHandler> = new Map([
 
       if (!dataLength.eqn(0)) {
         const data = getDataSlice(runState.eei.getCode(), codeOffset, dataLength)
+        runState.vcm.computeFunctionCounters('opCodeCopy', {
+          inputSize: data.length,
+          isCreate: runState.eei._env.isCreate,
+          isDeploy: runState.eei._env.isDeploy,
+        })
         const memOffsetNum = memOffset.toNumber()
         const lengthNum = dataLength.toNumber()
         runState.memory.extend(memOffsetNum, lengthNum)
@@ -481,6 +632,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x3b,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opExtCodeSize', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const addressBN = runState.stack.pop()
       const size = await runState.eei.getExternalCodeSize(addressBN)
       runState.stack.push(size)
@@ -491,11 +646,16 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x3c,
     async function (runState) {
       const [addressBN, memOffset, codeOffset, dataLength] = runState.stack.popN(4)
-
       if (!dataLength.eqn(0)) {
         const code = await runState.eei.getExternalCode(addressBN)
 
         const data = getDataSlice(code, codeOffset, dataLength)
+        runState.vcm.computeFunctionCounters('opExtCodeCopy', {
+          inputSize: data.length,
+          bytecodeLen: code.length,
+          isCreate: runState.eei._env.isCreate,
+          isDeploy: runState.eei._env.isDeploy,
+        })
         const memOffsetNum = memOffset.toNumber()
         const lengthNum = dataLength.toNumber()
         runState.memory.extend(memOffsetNum, lengthNum)
@@ -507,6 +667,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x3f,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opExtCodeHash', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const addressBN = runState.stack.pop()
       const code = await runState.eei.getExternalCode(addressBN)
       if (code.length === 0) {
@@ -522,6 +686,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x3d,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opReturnDataSize', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getReturnDataSize())
     },
   ],
@@ -533,6 +701,11 @@ export const handlers: Map<number, OpHandler> = new Map([
 
       if (!dataLength.eqn(0)) {
         const data = getDataSlice(runState.eei.getReturnData(), returnDataOffset, dataLength)
+        runState.vcm.computeFunctionCounters('opReturnDataCopy', {
+          inputSize: data.length,
+          isCreate: runState.eei._env.isCreate,
+          isDeploy: runState.eei._env.isDeploy,
+        })
         const memOffsetNum = memOffset.toNumber()
         const lengthNum = dataLength.toNumber()
         runState.memory.extend(memOffsetNum, lengthNum)
@@ -544,6 +717,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x3a,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opGasPrice', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getTxGasPrice())
     },
   ],
@@ -552,6 +729,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x40,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opBlockHash', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const number = runState.stack.pop()
       const hash = await runState.eei.getBatchHash(number)
       runState.stack.push(hash)
@@ -561,6 +742,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x41,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opCoinbase', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getBlockCoinbase())
     },
   ],
@@ -568,6 +753,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x42,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opTimestamp', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getBlockTimestamp())
     },
   ],
@@ -575,6 +764,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x43,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opNumber', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const num = await runState.eei.getBlockNum()
       runState.stack.push(num)
     },
@@ -583,6 +776,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x44,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opDifficulty', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getBlockDifficulty())
     },
   ],
@@ -590,6 +787,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x45,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opGasLimit', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getBlockGasLimit())
     },
   ],
@@ -597,6 +798,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x46,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opChainId', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getChainId())
     },
   ],
@@ -604,6 +809,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x47,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opSelfBalance', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getSelfBalance())
     },
   ],
@@ -611,6 +820,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x48,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opBaseFee', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.eei.getBlockBaseFee())
       //runState.stack.push(new BN(0))
     },
@@ -620,6 +833,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x50,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opPop', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.pop()
     },
   ],
@@ -627,6 +844,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x51,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMLoad', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const pos = runState.stack.pop()
       const word = runState.memory.read(pos.toNumber(), 32)
       runState.stack.push(new BN(word))
@@ -636,6 +857,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x52,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMStore', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [offset, word] = runState.stack.popN(2)
       const buf = word.toArrayLike(Buffer, 'be', 32)
       const offsetNum = offset.toNumber()
@@ -647,6 +872,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x53,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMStore8', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [offset, byte] = runState.stack.popN(2)
 
       // NOTE: we're using a 'trick' here to get the least significant byte
@@ -662,6 +891,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x54,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opSLoad', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const key = runState.stack.pop()
       const keyBuf = key.toArrayLike(Buffer, 'be', 32)
       const value = await runState.eei.storageLoad(keyBuf)
@@ -673,6 +906,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x55,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opSStore', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [key, val] = runState.stack.popN(2)
 
       const keyBuf = key.toArrayLike(Buffer, 'be', 32)
@@ -691,6 +928,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x56,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opJump', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const dest = runState.stack.pop()
       if (dest.gt(runState.eei.getCodeSize())) {
         trap(ERROR.INVALID_JUMP + ' at ' + describeLocation(runState))
@@ -709,6 +950,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x57,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opJumpI', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [dest, cond] = runState.stack.popN(2)
       if (!cond.isZero()) {
         if (dest.gt(runState.eei.getCodeSize())) {
@@ -729,6 +974,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x58,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opPC', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(new BN(runState.programCounter - 1))
     },
   ],
@@ -736,6 +985,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x59,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opMSize', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(runState.memoryWordCount.muln(32))
     },
   ],
@@ -743,11 +996,23 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x5a,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opGas', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(new BN(runState.eei.getGasLeft()))
     },
   ],
   // 0x5b: JUMPDEST
-  [0x5b, function () {}],
+  [
+    0x5b,
+    function (runState) {
+      runState.vcm.computeFunctionCounters('opJumpDest', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
+    },
+  ],
   // 0x5c: BEGINSUB
   [
     0x5c,
@@ -791,6 +1056,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x5f,
     function (runState) {
+      runState.vcm.computeFunctionCounters('opPush0', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       runState.stack.push(new BN(0))
     },
   ],
@@ -799,6 +1068,11 @@ export const handlers: Map<number, OpHandler> = new Map([
     0x60,
     function (runState) {
       const numToPush = runState.opCode - 0x5f
+      runState.vcm.computeFunctionCounters('_opPush', {
+        pushBytes: numToPush,
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const loaded = new BN(
         runState.eei.getCode().slice(runState.programCounter, runState.programCounter + numToPush)
       )
@@ -810,6 +1084,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x80,
     function (runState) {
+      runState.vcm.computeFunctionCounters('_opDup', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const stackPos = runState.opCode - 0x7f
       runState.stack.dup(stackPos)
     },
@@ -818,6 +1096,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0x90,
     function (runState) {
+      runState.vcm.computeFunctionCounters('_opSwap', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const stackPos = runState.opCode - 0x8f
       runState.stack.swap(stackPos)
     },
@@ -827,7 +1109,11 @@ export const handlers: Map<number, OpHandler> = new Map([
     0xa0,
     function (runState) {
       const [memOffset, memLength] = runState.stack.popN(2)
-
+      runState.vcm.computeFunctionCounters('_opLog', {
+        inputSize: memLength.toNumber(),
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const topicsCount = runState.opCode - 0xa0
 
       const topics = runState.stack.popN(topicsCount)
@@ -850,7 +1136,17 @@ export const handlers: Map<number, OpHandler> = new Map([
     0xf0,
     async function (runState) {
       const [value, offset, length] = runState.stack.popN(3)
-
+      runState.vcm.computeFunctionCounters('opCreate', {
+        bytesNonceLength: runState.eei._env.contract.nonce.addn(1).toArrayLike(Buffer).length,
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
+      runState.vcm.computeFunctionCounters('_processContractCall', {
+        bytecodeLength: length.toNumber(),
+        isDeploy: false,
+        isCreate: true,
+        isCreate2: false,
+      })
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
@@ -871,9 +1167,18 @@ export const handlers: Map<number, OpHandler> = new Map([
       if (runState.eei.isStatic()) {
         trap(ERROR.STATIC_STATE_CHANGE)
       }
-
       const [value, offset, length, salt] = runState.stack.popN(4)
-
+      runState.vcm.computeFunctionCounters('opCreate2', {
+        bytesNonceLength: runState.eei._env.contract.nonce.addn(1).toArrayLike(Buffer).length,
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
+      runState.vcm.computeFunctionCounters('_processContractCall', {
+        bytecodeLength: length.toNumber(),
+        isDeploy: false,
+        isCreate: false,
+        isCreate2: true,
+      })
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
@@ -896,10 +1201,20 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xf1,
     async function (runState: RunState) {
+      runState.vcm.computeFunctionCounters('opCall', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [_currentGasLimit, toAddr, value, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(7)
       const toAddress = new Address(addressToBuffer(toAddr))
-
+      const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('_processContractCall', {
+        bytecodeLength: bytecodeLength.toNumber(),
+        isDeploy: false,
+        isCreate: false,
+        isCreate2: false,
+      })
       let data = Buffer.alloc(0)
       if (!inLength.isZero()) {
         data = runState.memory.read(inOffset.toNumber(), inLength.toNumber())
@@ -908,7 +1223,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
-      const ret = await runState.eei.call(gasLimit, toAddress, value, data)
+      const ret = await runState.eei.call(gasLimit, toAddress, value, data, outLength)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
@@ -919,10 +1234,21 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xf2,
     async function (runState: RunState) {
+      runState.vcm.computeFunctionCounters('opCallCode', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const [_currentGasLimit, toAddr, value, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(7)
       const toAddress = new Address(addressToBuffer(toAddr))
 
+      const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('_processContractCall', {
+        bytecodeLength: bytecodeLength.toNumber(),
+        isDeploy: false,
+        isCreate: false,
+        isCreate2: false,
+      })
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
@@ -931,7 +1257,7 @@ export const handlers: Map<number, OpHandler> = new Map([
         data = runState.memory.read(inOffset.toNumber(), inLength.toNumber())
       }
 
-      const ret = await runState.eei.callCode(gasLimit, toAddress, value, data)
+      const ret = await runState.eei.callCode(gasLimit, toAddress, value, data, outLength)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
@@ -942,11 +1268,21 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xf4,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opDelegateCall', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const value = runState.eei.getCallValue()
       const [_currentGasLimit, toAddr, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(6)
       const toAddress = new Address(addressToBuffer(toAddr))
-
+      const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('_processContractCall', {
+        bytecodeLength: bytecodeLength.toNumber(),
+        isDeploy: false,
+        isCreate: false,
+        isCreate2: false,
+      })
       let data = Buffer.alloc(0)
       if (!inLength.isZero()) {
         data = runState.memory.read(inOffset.toNumber(), inLength.toNumber())
@@ -955,7 +1291,7 @@ export const handlers: Map<number, OpHandler> = new Map([
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
-      const ret = await runState.eei.callDelegate(gasLimit, toAddress, value, data)
+      const ret = await runState.eei.callDelegate(gasLimit, toAddress, value, data, outLength)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
@@ -966,11 +1302,21 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xfa,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opStaticCall', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const value = new BN(0)
       const [_currentGasLimit, toAddr, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(6)
       const toAddress = new Address(addressToBuffer(toAddr))
-
+      const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('_processContractCall', {
+        bytecodeLength: bytecodeLength.toNumber(),
+        isDeploy: false,
+        isCreate: false,
+        isCreate2: false,
+      })
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
@@ -979,7 +1325,7 @@ export const handlers: Map<number, OpHandler> = new Map([
         data = runState.memory.read(inOffset.toNumber(), inLength.toNumber())
       }
 
-      const ret = await runState.eei.callStatic(gasLimit, toAddress, value, data)
+      const ret = await runState.eei.callStatic(gasLimit, toAddress, value, data, outLength)
       // Write return data to memory
       writeCallOutput(runState, outOffset, outLength)
       runState.stack.push(ret.returnCode)
@@ -991,6 +1337,11 @@ export const handlers: Map<number, OpHandler> = new Map([
     0xf3,
     function (runState) {
       const [offset, length] = runState.stack.popN(2)
+      runState.vcm.computeFunctionCounters('opReturn', {
+        returnLength: length.toNumber(),
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       let returnData = Buffer.alloc(0)
       if (!length.isZero()) {
         returnData = runState.memory.read(offset.toNumber(), length.toNumber())
@@ -1003,6 +1354,11 @@ export const handlers: Map<number, OpHandler> = new Map([
     0xfd,
     function (runState) {
       const [offset, length] = runState.stack.popN(2)
+      runState.vcm.computeFunctionCounters('opRevert', {
+        revertSize: length.toNumber(),
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       let returnData = Buffer.alloc(0)
       if (!length.isZero()) {
         returnData = runState.memory.read(offset.toNumber(), length.toNumber())
@@ -1015,6 +1371,10 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xff,
     async function (runState) {
+      runState.vcm.computeFunctionCounters('opSendAll', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+      })
       const selfdestructToAddressBN = runState.stack.pop()
       const selfdestructToAddress = new Address(addressToBuffer(selfdestructToAddressBN))
       return runState.eei.selfDestruct(selfdestructToAddress)
