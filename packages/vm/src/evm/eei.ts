@@ -393,7 +393,7 @@ export default class EEI {
       new Address(toBuffer(ADDRESS_SYSTEM)),
       toBuffer(LAST_TX_STORAGE_POS)
     )
-    return new BN(blockNum)
+    return new BN(blockNum).add(new BN(1))
   }
 
   /**
