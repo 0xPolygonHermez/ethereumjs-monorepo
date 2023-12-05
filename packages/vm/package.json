@@ -1,6 +1,6 @@
 {
   "name": "@polygon-hermez/vm",
-  "version": "6.0.0",
+  "version": "5.7.39",
   "description": "An Ethereum VM implementation",
   "license": "MPL-2.0",
   "author": "mjbecze <mjbecze@gmail.com>",
@@ -23,7 +23,6 @@
     "build:benchmarks": "npm run build && tsc -p tsconfig.benchmarks.json",
     "benchmarks": "node --max-old-space-size=4096 ./benchmarks/run.js benchmarks mainnetBlocks:10",
     "profiling": "0x ./benchmarks/run.js profiling",
-    "prepublishOnly": "../../config/cli/prepublish.sh && npm run test:buildIntegrity",
     "clean": "../../config/cli/clean-package.sh",
     "coverage": "nyc npm run coverage:test",
     "coverage:test": "npm run test:API && npm run tester -- --state",

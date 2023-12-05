@@ -290,11 +290,23 @@ export default class EVM {
       if (this._vm.DEBUG) {
         debug(`Run precompile`)
       }
-      result = await this.runPrecompile(
-        message.code as PrecompileFunc,
-        message.data,
-        message.gasLimit
-      )
+      const unsupportedPrecompileds = [
+        new Address(Buffer.from('0000000000000000000000000000000000000003', 'hex')), //ripemd-160
+        new Address(Buffer.from('0000000000000000000000000000000000000009', 'hex')), //blake
+      ]
+      if (unsupportedPrecompileds.includes(message.to)) {
+        result = {
+          returnValue: Buffer.alloc(0),
+          gasUsed: new BN(0),
+          exceptionError: new VmError(ERROR.REVERT),
+        }
+      } else {
+        result = await this.runPrecompile(
+          message.code as PrecompileFunc,
+          message.data,
+          message.gasLimit
+        )
+      }
     } else {
       if (this._vm.DEBUG) {
         debug(`Start bytecode processing...`)
