@@ -290,11 +290,11 @@ export default class EVM {
       if (this._vm.DEBUG) {
         debug(`Run precompile`)
       }
-      const supportedPrecompileds = [
-        new Address(Buffer.from('0000000000000000000000000000000000000001', 'hex')), //ecrecover
-        new Address(Buffer.from('0000000000000000000000000000000000000004', 'hex')), //identity
+      const unsupportedPrecompileds = [
+        new Address(Buffer.from('0000000000000000000000000000000000000003', 'hex')), //ripemd-160
+        new Address(Buffer.from('0000000000000000000000000000000000000009', 'hex')), //blake
       ]
-      if (!supportedPrecompileds.includes(message.to)) {
+      if (unsupportedPrecompileds.includes(message.to)) {
         result = {
           returnValue: Buffer.alloc(0),
           gasUsed: new BN(0),
