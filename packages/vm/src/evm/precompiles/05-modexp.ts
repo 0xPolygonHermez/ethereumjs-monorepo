@@ -1,6 +1,8 @@
 import { setLengthRight, BN } from 'ethereumjs-util'
 import { PrecompileInput } from './types'
-import { OOGResult, ExecResult } from '../evm'
+import { OOGResult, ExecResult, VmErrorResult } from '../evm'
+import { ERROR, VmError } from '../../exceptions'
+
 const assert = require('assert')
 const MAX_SIZE_MODEXP = new BN(1024)
 
@@ -86,11 +88,6 @@ export default function (opts: PrecompileInput): ExecResult {
   const eLen = new BN(data.slice(32, 64))
   const mLen = new BN(data.slice(64, 96))
 
-  // If base values are greater than max supported at zkEVM, return OOG
-  if (bLen.gt(MAX_SIZE_MODEXP) || eLen.gt(MAX_SIZE_MODEXP) || mLen.gt(MAX_SIZE_MODEXP)) {
-    return OOGResult(opts.gasLimit)
-  }
-
   let maxLen = bLen
   if (maxLen.lt(mLen)) {
     maxLen = mLen
@@ -116,6 +113,11 @@ export default function (opts: PrecompileInput): ExecResult {
 
   if (opts.gasLimit.lt(gasUsed)) {
     return OOGResult(opts.gasLimit)
+  }
+
+  // If base values are greater than max supported at zkEVM, return OOG
+  if (bLen.gt(MAX_SIZE_MODEXP) || eLen.gt(MAX_SIZE_MODEXP) || mLen.gt(MAX_SIZE_MODEXP)) {
+    return VmErrorResult(new VmError(ERROR.MAX_SIZE_MODEXP), new BN(0))
   }
 
   if (bLen.isZero()) {
