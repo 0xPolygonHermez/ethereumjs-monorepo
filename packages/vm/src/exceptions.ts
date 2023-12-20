@@ -17,7 +17,7 @@ export enum ERROR {
   INVALID_RETURNSUB = 'invalid RETURNSUB',
   INVALID_JUMPSUB = 'invalid JUMPSUB',
   INVALID_BYTECODE_RESULT = 'invalid bytecode deployed',
-
+  MAX_SIZE_MODEXP = 'max size modexp exceeded',
   // BLS errors
   BLS_12_381_INVALID_INPUT_LENGTH = 'invalid input length',
   BLS_12_381_POINT_NOT_ON_CURVE = 'point not on curve',
