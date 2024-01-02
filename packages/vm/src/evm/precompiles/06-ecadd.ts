@@ -16,6 +16,9 @@ export default function (opts: PrecompileInput): ExecResult {
 
   const returnData = bn128.add(inputData)
 
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preECAdd')
+
   // check ecadd success or failure by comparing the output length
   if (returnData.length !== 64) {
     return OOGResult(opts.gasLimit)

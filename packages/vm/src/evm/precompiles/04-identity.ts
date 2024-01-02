@@ -21,6 +21,7 @@ export default function (opts: PrecompileInput): ExecResult {
     calldataLength: data.length,
     returnDataLength: opts.outLength.toNumber(),
   })
+
   return {
     gasUsed,
     returnValue: data,

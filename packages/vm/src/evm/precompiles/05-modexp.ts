@@ -120,6 +120,12 @@ export default function (opts: PrecompileInput): ExecResult {
     return VmErrorResult(new VmError(ERROR.MAX_SIZE_MODEXP), new BN(0))
   }
 
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preModExp', {
+    calldataLength: data.length,
+    returnDataLength: opts.outLength.toNumber(),
+  })
+
   if (bLen.isZero()) {
     return {
       gasUsed,

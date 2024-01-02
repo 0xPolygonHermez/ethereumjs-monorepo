@@ -15,6 +15,10 @@ export default function (opts: PrecompileInput): ExecResult {
   }
 
   const returnData = bn128.mul(inputData)
+
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preECMul')
+
   // check ecmul success or failure by comparing the output length
   if (returnData.length !== 64) {
     return OOGResult(opts.gasLimit)

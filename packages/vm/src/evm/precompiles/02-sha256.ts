@@ -17,6 +17,11 @@ export default function (opts: PrecompileInput): ExecResult {
     return OOGResult(opts.gasLimit)
   }
 
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preSHA256', {
+    calldataLength: data.length,
+  })
+
   return {
     gasUsed,
     returnValue: sha256(data),
