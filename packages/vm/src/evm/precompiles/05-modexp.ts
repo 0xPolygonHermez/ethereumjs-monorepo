@@ -115,10 +115,6 @@ export default function (opts: PrecompileInput): ExecResult {
     return OOGResult(opts.gasLimit)
   }
 
-  // If base values are greater than max supported at zkEVM, return OOG
-  if (bLen.gt(MAX_SIZE_MODEXP) || eLen.gt(MAX_SIZE_MODEXP) || mLen.gt(MAX_SIZE_MODEXP)) {
-    return VmErrorResult(new VmError(ERROR.MAX_SIZE_MODEXP), new BN(0))
-  }
 
   // Reduce counters
   opts._VM.vcm.computeFunctionCounters('preModExp', {
@@ -138,6 +134,11 @@ export default function (opts: PrecompileInput): ExecResult {
       gasUsed,
       returnValue: Buffer.alloc(0),
     }
+  }
+
+  // If base values are greater than max supported at zkEVM, return OOG
+  if (bLen.gt(MAX_SIZE_MODEXP) || eLen.gt(MAX_SIZE_MODEXP) || mLen.gt(MAX_SIZE_MODEXP)) {
+    return VmErrorResult(new VmError(ERROR.MAX_SIZE_MODEXP), new BN(0))
   }
 
   const maxInt = new BN(Number.MAX_SAFE_INTEGER)
