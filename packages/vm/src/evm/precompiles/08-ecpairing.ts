@@ -22,7 +22,7 @@ export default function (opts: PrecompileInput): ExecResult {
   const returnData = bn128.pairing(inputData)
 
   // Reduce counters
-  opts._VM.vcm.computeFunctionCounters('preECPairing')
+  opts._VM.vcm.computeFunctionCounters('preECPairing', { inputsCount: inputDataSize })
 
   // check ecpairing success or failure by comparing the output length
   if (returnData.length !== 32) {

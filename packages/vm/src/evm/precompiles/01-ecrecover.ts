@@ -20,9 +20,9 @@ export default function (opts: PrecompileInput): ExecResult {
   const s = data.slice(96, 128)
   // Reduce counters
   opts._VM.vcm.computeFunctionCounters('preECRecover', {
-    v: new BN(v).toString(),
-    r: new BN(r).toString(),
-    s: new BN(s).toString(),
+    v: new BN(v).toString('hex'),
+    r: new BN(r).toString('hex'),
+    s: new BN(s).toString('hex'),
   })
   let publicKey
   try {

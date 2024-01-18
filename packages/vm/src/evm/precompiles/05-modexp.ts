@@ -115,13 +115,6 @@ export default function (opts: PrecompileInput): ExecResult {
     return OOGResult(opts.gasLimit)
   }
 
-
-  // Reduce counters
-  opts._VM.vcm.computeFunctionCounters('preModExp', {
-    calldataLength: data.length,
-    returnDataLength: opts.outLength.toNumber(),
-  })
-
   if (bLen.isZero()) {
     return {
       gasUsed,
@@ -155,6 +148,18 @@ export default function (opts: PrecompileInput): ExecResult {
   if (mEnd.gt(maxInt)) {
     return OOGResult(opts.gasLimit)
   }
+
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preModExp', {
+    bLen: bLen.toNumber(),
+    eLen: eLen.toNumber(),
+    mLen: mLen.toNumber(),
+    base: B.toString('hex'),
+    exponent: E.toString('hex'),
+    modulus: M.toString('hex'),
+    calldataLength: data.length,
+    returnDataLength: opts.outLength.toNumber(),
+  })
 
   let R
   if (M.isZero()) {
