@@ -1140,13 +1140,9 @@ export const handlers: Map<number, OpHandler> = new Map([
         bytesNonceLength: runState.eei._env.contract.nonce.addn(1).toArrayLike(Buffer).length,
         isCreate: runState.eei._env.isCreate,
         isDeploy: runState.eei._env.isDeploy,
+        inLength: length.toNumber(),
       })
-      runState.vcm.computeFunctionCounters('_processContractCall', {
-        bytecodeLength: length.toNumber(),
-        isDeploy: false,
-        isCreate: true,
-        isCreate2: false,
-      })
+
       const gasLimit = runState.messageGasLimit!
       runState.messageGasLimit = undefined
 
@@ -1157,6 +1153,15 @@ export const handlers: Map<number, OpHandler> = new Map([
 
       const ret = await runState.eei.create(gasLimit, value, data)
       runState.stack.push(ret.returnCode)
+      if (typeof ret.results !== 'undefined') {
+        // If there is execution result (the create has been executed), we need to compute _processContractCall counters
+        runState.vcm.computeFunctionCounters('_processContractCall', {
+          bytecodeLength: length.toNumber(),
+          isDeploy: false,
+          isCreate: true,
+          isCreate2: false,
+        })
+      }
       return ret.results
     },
   ],
@@ -1172,6 +1177,7 @@ export const handlers: Map<number, OpHandler> = new Map([
         bytesNonceLength: runState.eei._env.contract.nonce.addn(1).toArrayLike(Buffer).length,
         isCreate: runState.eei._env.isCreate,
         isDeploy: runState.eei._env.isDeploy,
+        inLength: length.toNumber(),
       })
       runState.vcm.computeFunctionCounters('_processContractCall', {
         bytecodeLength: length.toNumber(),
@@ -1201,14 +1207,16 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xf1,
     async function (runState: RunState) {
-      runState.vcm.computeFunctionCounters('opCall', {
-        isCreate: runState.eei._env.isCreate,
-        isDeploy: runState.eei._env.isDeploy,
-      })
       const [_currentGasLimit, toAddr, value, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(7)
       const toAddress = new Address(addressToBuffer(toAddr))
       const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('opCall', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+        inLength: inLength.toNumber(),
+        outLength: outLength.toNumber(),
+      })
       runState.vcm.computeFunctionCounters('_processContractCall', {
         bytecodeLength: bytecodeLength.toNumber(),
         isDeploy: false,
@@ -1234,14 +1242,15 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xf2,
     async function (runState: RunState) {
-      runState.vcm.computeFunctionCounters('opCallCode', {
-        isCreate: runState.eei._env.isCreate,
-        isDeploy: runState.eei._env.isDeploy,
-      })
       const [_currentGasLimit, toAddr, value, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(7)
       const toAddress = new Address(addressToBuffer(toAddr))
-
+      runState.vcm.computeFunctionCounters('opCallCode', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+        inLength: inLength.toNumber(),
+        outLength: outLength.toNumber(),
+      })
       const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
       runState.vcm.computeFunctionCounters('_processContractCall', {
         bytecodeLength: bytecodeLength.toNumber(),
@@ -1268,15 +1277,17 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xf4,
     async function (runState) {
-      runState.vcm.computeFunctionCounters('opDelegateCall', {
-        isCreate: runState.eei._env.isCreate,
-        isDeploy: runState.eei._env.isDeploy,
-      })
       const value = runState.eei.getCallValue()
       const [_currentGasLimit, toAddr, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(6)
       const toAddress = new Address(addressToBuffer(toAddr))
       const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('opDelegateCall', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+        inLength: inLength.toNumber(),
+        outLength: outLength.toNumber(),
+      })
       runState.vcm.computeFunctionCounters('_processContractCall', {
         bytecodeLength: bytecodeLength.toNumber(),
         isDeploy: false,
@@ -1302,15 +1313,17 @@ export const handlers: Map<number, OpHandler> = new Map([
   [
     0xfa,
     async function (runState) {
-      runState.vcm.computeFunctionCounters('opStaticCall', {
-        isCreate: runState.eei._env.isCreate,
-        isDeploy: runState.eei._env.isDeploy,
-      })
       const value = new BN(0)
       const [_currentGasLimit, toAddr, inOffset, inLength, outOffset, outLength] =
         runState.stack.popN(6)
       const toAddress = new Address(addressToBuffer(toAddr))
       const bytecodeLength = await runState.eei.getExternalCodeSize(toAddr)
+      runState.vcm.computeFunctionCounters('opStaticCall', {
+        isCreate: runState.eei._env.isCreate,
+        isDeploy: runState.eei._env.isDeploy,
+        inLength: inLength.toNumber(),
+        outLength: outLength.toNumber(),
+      })
       runState.vcm.computeFunctionCounters('_processContractCall', {
         bytecodeLength: bytecodeLength.toNumber(),
         isDeploy: false,
