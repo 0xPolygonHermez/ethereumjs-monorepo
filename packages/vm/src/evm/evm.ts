@@ -292,7 +292,6 @@ export default class EVM {
       }
       const unsupportedPrecompileds = [
         '0x0000000000000000000000000000000000000003', // RIPEMD-160
-        '0x0000000000000000000000000000000000000005', // modexp
         '0x0000000000000000000000000000000000000009', // blake
     ];
     if (unsupportedPrecompileds.includes(message.to.toString())) {
