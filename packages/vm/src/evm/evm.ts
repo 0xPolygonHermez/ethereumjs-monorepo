@@ -291,10 +291,11 @@ export default class EVM {
         debug(`Run precompile`)
       }
       const unsupportedPrecompileds = [
-        new Address(Buffer.from('0000000000000000000000000000000000000003', 'hex')), //ripemd-160
-        new Address(Buffer.from('0000000000000000000000000000000000000009', 'hex')), //blake
-      ]
-      if (unsupportedPrecompileds.includes(message.to)) {
+        '0x0000000000000000000000000000000000000003', // RIPEMD-160
+        '0x0000000000000000000000000000000000000005', // modexp
+        '0x0000000000000000000000000000000000000009', // blake
+    ];
+    if (unsupportedPrecompileds.includes(message.to.toString())) {
         result = {
           returnValue: Buffer.alloc(0),
           gasUsed: new BN(0),
