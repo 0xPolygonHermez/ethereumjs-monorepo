@@ -9,6 +9,10 @@
       "v": 20,
       "d": "Gquaddivisor from modexp precompile for gas calculation"
     },
+    "p256verify": {
+      "v": 3450,
+      "d": "Gas costs p256verify"
+    },
     "ecAdd": {
       "v": 500,
       "d": "Gas costs for curve addition precompile"

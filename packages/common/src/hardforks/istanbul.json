@@ -9,6 +9,10 @@
       "v": 1,
       "d": "Gas cost per round for the Blake2 F precompile"
     },
+    "p256verify": {
+      "v": 3450,
+      "d": "Gas costs p256verify"
+    },
     "ecAdd": {
       "v": 150,
       "d": "Gas costs for curve addition precompile"
