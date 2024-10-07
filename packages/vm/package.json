@@ -1,6 +1,6 @@
 {
   "name": "@polygon-hermez/vm",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "An Ethereum VM implementation",
   "license": "MPL-2.0",
   "author": "mjbecze <mjbecze@gmail.com>",
@@ -54,6 +54,7 @@
     "async-eventemitter": "^0.2.4",
     "core-js-pure": "^3.0.1",
     "debug": "^4.3.3",
+    "elliptic": "^6.5.7",
     "ethereumjs-util": "^7.1.4",
     "ethers": "^5.6.2",
     "functional-red-black-tree": "^1.0.1",
@@ -66,6 +67,7 @@
     "@ethersproject/abi": "^5.0.12",
     "@types/benchmark": "^1.0.33",
     "@types/core-js": "^2.5.0",
+    "@types/elliptic": "^6.4.18",
     "@types/lodash": "^4.14.194",
     "@types/lru-cache": "^5.1.0",
     "@types/minimist": "^1.2.2",
@@ -102,5 +104,8 @@
   "homepage": "https://github.com/ethereumjs/ethereumjs-monorepo/tree/master/packages/vm#readme",
   "bugs": {
     "url": "https://github.com/ethereumjs/ethereumjs-monorepo/issues?q=is%3Aissue+label%3A%22package%3A+vm%22"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
