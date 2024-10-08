@@ -9,11 +9,11 @@ import { ec as EC } from 'elliptic';
 const ec = new EC('p256'); // 'p256' is equivalent to 'prime256v1' or 'secp256r1'
 
 function verifyP256Signature(
-  msgHash: Buffer,
+  pubKeyX: Buffer,
+  pubKeyY: Buffer,
   r: Buffer,
   s: Buffer,
-  pubKeyX: Buffer,
-  pubKeyY: Buffer
+  msgHash: Buffer
 ): boolean {
   // Check that all inputs have the correct length (32 bytes each)
   if (
