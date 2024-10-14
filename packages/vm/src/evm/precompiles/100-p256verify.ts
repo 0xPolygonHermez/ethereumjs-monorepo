@@ -75,13 +75,13 @@ export default function (opts: PrecompileInput): ExecResult {
   const pubKeyX = data.slice(96, 128)
   const pubKeyY = data.slice(128, 160) // Assuming a 32-byte message hash
 
-  // Optionally, update the function counters for VM tracing/debugging
-  // opts._VM.vcm.computeFunctionCounters('preP256Verify', {
-  //   pubKeyX: new BN(pubKeyX).toString('hex'),
-  //   pubKeyY: new BN(pubKeyY).toString('hex'),
-  //   r: new BN(r).toString('hex'),
-  //   s: new BN(s).toString('hex'),
-  // })
+  // Reduce counters
+  opts._VM.vcm.computeFunctionCounters('preP256Verify', {
+    pubKeyX: new BN(pubKeyX).toString('hex'),
+    pubKeyY: new BN(pubKeyY).toString('hex'),
+    r: new BN(r).toString('hex'),
+    s: new BN(s).toString('hex'),
+  })
 
   // Verify the signature
   let isValid
